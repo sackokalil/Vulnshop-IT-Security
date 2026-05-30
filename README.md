@@ -22,27 +22,26 @@ git clone https://github.com/sackokalil/VulnShop.git
 cd VulnShop
 ```
 
-### 3. Abhängigkeiten installieren
-
+### 3. Virtuelle Umgebung erstellen
 ```bash
 python -m venv .venv
 ```
-
+### 4. Virtuelle Umgebung aktivieren
 ```bash
 .venv\Scripts\activate
 ```
-
+### 5. Abhängigkeiten installieren
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Anwendung starten
+### 6. Anwendung starten
 
 ```bash
 python run.py
 ```
 
-### 5. Anwendung im Browser öffnen
+### 7. Anwendung im Browser öffnen
 
 ```text
 http://127.0.0.1:5000
