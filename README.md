@@ -13,7 +13,7 @@ Aktuell sind hauptsächlich statische Platzhalterseiten implementiert, um die zu
 ### 1. Repository klonen
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/sackokalil/VulnShop.git
 ```
 
 ### 2. In das Projektverzeichnis wechseln
