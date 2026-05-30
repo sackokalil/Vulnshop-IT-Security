@@ -1,0 +1,298 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+ <div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-file-alt fa-sm text-white-50"></i>
+            Security Report
+        </a>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">40</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Products</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">65</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-box fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Orders
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Security challenges</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">10/10</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shield-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Area Chart -->
+            <!-- Unten in card Body steht der Platzt der
+            Security explots Attempts charts.
+            Der chart ist ein js-datei -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Exploit Attempts Overview</h6>
+                    <div >
+                        <p>
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </p>
+                        
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="myAreaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Pie Chart  Vulnerability type-->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Vulnerability Types</h6>
+                    <div>
+                        <p>
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </p>
+                        
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+
+                    <div class="mt-4 text-center small">
+
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-danger"></i> SQL Injection
+                        </span>
+
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-warning"></i> XSS
+                        </span>
+
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Broken Access Control
+                        </span>
+
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-info"></i> Path Traversal
+                        </span>
+
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-secondary"></i> Broken Authentication
+                        </span>
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Content Column -->
+        <div class="col-lg-6 mb-4">
+
+            <!-- Recent security events -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Security Events</h6>
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <i class="fas fa-user-shield text-success"></i>
+                        User <strong>admin</strong> logged in
+                        <small class="text-muted float-right">2 min ago</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <i class="fas fa-exclamation-triangle text-danger"></i>
+                        Failed login attempt detected
+                        <small class="text-muted float-right">5 min ago</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <i class="fas fa-bug text-warning"></i>
+                        Suspicious SQL input detected in product search
+                        <small class="text-muted float-right">12 min ago</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <i class="fas fa-file-download text-info"></i>
+                        Invoice file downloaded
+                        <small class="text-muted float-right">20 min ago</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <i class="fas fa-code text-secondary"></i>
+                        Review submitted with HTML content
+                        <small class="text-muted float-right">35 min ago</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <i class="fas fa-folder-open text-danger"></i>
+                        Unauthorized file access attempt detected
+                        <small class="text-muted float-right">48 min ago</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <i class="fas fa-user-secret text-warning"></i>
+                        Multiple failed admin login attempts detected
+                        <small class="text-muted float-right">1 hour ago</small>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-6 mb-4">
+
+            <!-- Project description -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Project Description</h6>
+                </div>
+                <div class="card-body">
+
+                    <div class="text-center mb-4">
+
+                        <i class="fas fa-bug fa-5x text-gray-300"></i>
+
+                    </div>
+                    <p>
+                        This project demonstrates a realistic vulnerable web application
+                        combined with an automated exploit framework for educational
+                        and security training purposes.
+                    </p>
+                    <p>
+                        The application intentionally contains two(2) of OWASP Top 10
+                        vulnerabilities and other Vulnerabilities like SQL Injection, XSS, Broken Authentication,
+                        IDOR, Path Traversal and File Upload vulnerabilities.
+                    </p>
+                    <p>
+                        Automated Python exploit scripts are used to demonstrate
+                        practical exploitation techniques and vulnerability analysis.
+                    </p>
+                    <p>
+                        The platform helps demonstrate how common web vulnerabilities
+                        can be exploited in realistic attack scenarios.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+        
+    </div>
+
+</div>
+
+
+{% endblock %}

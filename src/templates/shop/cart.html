@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+      <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <a href="{{url_for('home.home_page')}}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Cart</span>
+        </div>
+    </div>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+        <div class="container">
+            <h1>My Cart</h1>
+
+            <div class="cart-layout">
+                <!-- Cart Items -->
+                <div class="cart-items">
+                    <div class="cart-header">
+                        <span>Produit</span>
+                        <span>Price</span>
+                        <span>Quantity</span>
+                        <span>Total</span>
+                        <span></span>
+                    </div>
+                    
+
+                    <!--Cart Item list-->
+                    <div id="cartItemsList">
+
+                        <div class="cart-item">
+                            <div class="cart-product">
+                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200" alt="Casque Audio">
+                                <div class="cart-product-info">
+                                    <h4>Casque Audio Sans Fil Premium</h4>
+                                    <span>Réf: 1</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="current-price">149,99 €</span>
+                            </div>
+
+                            <div class="quantity-selector">
+                                <button class="qty-btn">-</button>
+                                <input type="number" value="1" min="1">
+                                <button class="qty-btn">+</button>
+                            </div>
+
+                            <div class="cart-item-total">149,99 €</div>
+
+                            <button class="remove-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+
+                        <div class="cart-item">
+                            <div class="cart-product">
+                                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200" alt="Montre connectée">
+                                <div class="cart-product-info">
+                                    <h4>Montre Connectée Sport</h4>
+                                    <span>Réf: 2</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="current-price">299,00 €</span>
+                            </div>
+
+                            <div class="quantity-selector">
+                                <button class="qty-btn">-</button>
+                                <input type="number" value="1" min="1">
+                                <button class="qty-btn">+</button>
+                            </div>
+
+                            <div class="cart-item-total">299,00 €</div>
+
+                            <button class="remove-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+
+                        <div class="cart-item">
+                            <div class="cart-product">
+                                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200" alt="Sac à dos">
+                                <div class="cart-product-info">
+                                    <h4>Sac à Dos Urbain</h4>
+                                    <span>Réf: 3</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="current-price">79,99 €</span>
+                            </div>
+
+                            <div class="quantity-selector">
+                                <button class="qty-btn">-</button>
+                                <input type="number" value="2" min="1">
+                                <button class="qty-btn">+</button>
+                            </div>
+
+                            <div class="cart-item-total">159,98 €</div>
+
+                            <button class="remove-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    
+
+
+
+                    <!-- Empty Cart Message -->
+                    <div class="empty-cart" id="emptyCart" style="display: none;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Votre panier est vide</h3>
+                        <p>Découvrez nos produits et commencez vos achats !</p>
+                        <a href="{{url_for('home.home_page')}}" class="btn btn-primary">Continuer mes achats</a>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="cart-summary" id="cartSummary">
+                    <h3>Récapitulatif</h3>
+                    
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span>608,97 €</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Livraison</span>
+                        <span>Gratuite</span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span>608,97 €</span>
+                    </div>
+
+                    <button class="btn btn-primary btn-block" id="checkoutBtn">
+                        Passer la commande
+                    </button>
+
+                    <div class="payment-methods">
+                        <span>Paiements sécurisés</span>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                            <i class="fab fa-apple-pay"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Continue Shopping -->
+    <section class="continue-shopping">
+        <div class="container">
+            <a href="{{url_for('home.home_page')}}" class="continue-link">
+                <i class="fas fa-arrow-left"></i> Continuer mes achats
+            </a>
+        </div>
+    </section>
+
+
+{% endblock %}
