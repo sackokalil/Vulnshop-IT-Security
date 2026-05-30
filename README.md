@@ -168,22 +168,4 @@ Beispiele:
 * CSRF-Demonstrationen
 * Broken-Access-Control-Angriffe
 
-## Ziel des Projekts
 
-Das Ziel von VulnShop besteht darin, eine realistische Webanwendung zu entwickeln, die sowohl typische E-Commerce-Funktionen als auch bewusst integrierte Sicherheitslücken enthält.
-
-Dadurch soll das Projekt als Lernplattform für:
-
-* Webentwicklung mit Flask
-* Sichere Softwareentwicklung
-* Web-Sicherheit
-* Penetration Testing
-* OWASP Top 10
-
-verwendet werden können.
-
-## Hinweis
-
-Dieses Projekt dient ausschließlich zu Ausbildungs-, Demonstrations- und Forschungszwecken.
-
-Die enthaltenen Sicherheitslücken werden bewusst integriert, um deren Funktionsweise sowie geeignete Schutzmaßnahmen zu demonstrieren.
