@@ -57,6 +57,16 @@ Folgende Routen können derzeit getestet werden:
 http://127.0.0.1:5000/home
 ```
 
+### Product details anzeigen : 
+```text
+Auf dem Product das fontawsom eye clicken
+```
+
+### Warenkorb anzeigen : 
+```text
+Auf dem Warenkorbszeichen oben rechts clicken
+```
+
 ### Administration
 
 ```text
