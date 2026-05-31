@@ -7,6 +7,7 @@ admin_dash_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 @admin_dash_bp.route("/dashboard")
 def dashboard():
+    """Hier sollte geprüft werden, ob der User eine Admin-Role hat"""
     return render_template("admin/index.html")
 
 
