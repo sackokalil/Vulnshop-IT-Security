@@ -28,3 +28,4 @@ cart_bp = Blueprint('cart', __name__)
 @cart_bp.route('/cart')
 def cart_page():
     return render_template('shop/cart.html')
+
