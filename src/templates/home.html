@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <!-- Hero Section -->
+    <section class="hero hero-carousel">
+        <div class="hero-slide slide-1"></div>
+        <div class="hero-slide slide-2"></div>
+        <div class="hero-slide slide-3"></div>
+
+        <div class="hero-overlay"></div>
+
+        <div class="container hero-content">
+            <!--<span class="hero-badge">New collection</span>-->
+            <h1>Welcome to VulnShop</h1>
+            <p>Discover our exceptional products selection</p>
+            <a href="{{ url_for('product.product_list') }}" class="btn btn-primary">
+              See products
+             </a>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="container">
+            <div class="category-grid">
+                <div class="category-card" data-category="electronics">
+                    <i class="fas fa-laptop"></i>
+                    <span>Electronics</span>
+                </div>
+                <div class="category-card" data-category="clothing">
+                    <i class="fas fa-tshirt"></i>
+                    <span>Clothings</span>
+                </div>
+                <div class="category-card" data-category="home">
+                    <i class="fas fa-home"></i>
+                    <span>Houses</span>
+                </div>
+                <div class="category-card" data-category="sports">
+                    <i class="fas fa-futbol"></i>
+                    <span>Sports</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <!-- Products -->
+    <section class="products" id="products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Products</h2>
+                <div class="filters">
+                    <select id="sortSelect">
+                        <option value="default">Filter by</option>
+                        <option value="price-asc">Price ascendent</option>
+                        <option value="price-desc">Price descendent</option>
+                        <option value="name">Name</option>
+                    </select>
+                </div>
+            </div>
+
+            
+    
+        </div>
+    </section>
+
+{% endblock %}

@@ -7,9 +7,9 @@
         <div class="container">
             <a href="{{url_for('home.home_page')}}">Home</a>
             <i class="fas fa-chevron-right"></i>
-            <span>Électronique</span>
+            <span>{{ product.category }}</span>
             <i class="fas fa-chevron-right"></i>
-            <span>Casque Audio Sans Fil Premium</span>
+            <span>{{ product.name }}</span>
         </div>
     </div>
 
@@ -20,21 +20,21 @@
 
                 <div class="product-images">
                     <div class="main-image">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700"
-                            alt="Casque Audio Sans Fil Premium">
+                        <img src="{{ product.image_url }}"
+                          alt="{{ product.name }}">
                         <span class="badge badge-sale">Promo</span>
                     </div>
 
                     <div class="thumbnail-grid">
                         <div class="thumbnail active">
-                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200"
-                                alt="Casque miniature">
+                            <img src="{{ product.image_url }}"
+                              alt="{{ product.name }}">
                         </div>
                     </div>
                 </div>
 
                 <div class="product-info">
-                    <h1>Casque Audio Sans Fil Premium</h1>
+                    <h1>{{ product.name }}</h1>
 
                     <div class="product-rating">
                         <div class="stars">
@@ -48,14 +48,13 @@
                     </div>
 
                     <div class="product-price">
-                        <span class="current-price">149,99 €</span>
-                        <span class="old-price">199,99 €</span>
-                        <span class="discount">-25%</span>
+                        <img src="{{ product.image_url }}"
+                         alt="{{ product.name }}">
+                        
                     </div>
 
                     <p class="product-description">
-                        Profitez d’un son puissant et immersif avec ce casque audio sans fil premium.
-                        Idéal pour écouter de la musique, regarder des films ou travailler dans le calme.
+                        {{ product.description }}
                     </p>
 
                     <div class="product-options">

@@ -3,46 +3,7 @@
 
 {% block content %}
 
-    <!-- Hero Section -->
-    <section class="hero hero-carousel">
-        <div class="hero-slide slide-1"></div>
-        <div class="hero-slide slide-2"></div>
-        <div class="hero-slide slide-3"></div>
-
-        <div class="hero-overlay"></div>
-
-        <div class="container hero-content">
-            <!--<span class="hero-badge">New collection</span>-->
-            <h1>Welcome to VulnShop</h1>
-            <p>Discover our exceptional products selection</p>
-            <a href="#products" class="btn btn-primary">See products</a>
-        </div>
-    </section>
-
-    <!-- Categories -->
-    <section class="categories">
-        <div class="container">
-            <div class="category-grid">
-                <div class="category-card" data-category="electronics">
-                    <i class="fas fa-laptop"></i>
-                    <span>Electronics</span>
-                </div>
-                <div class="category-card" data-category="clothing">
-                    <i class="fas fa-tshirt"></i>
-                    <span>Clothings</span>
-                </div>
-                <div class="category-card" data-category="home">
-                    <i class="fas fa-home"></i>
-                    <span>Houses</span>
-                </div>
-                <div class="category-card" data-category="sports">
-                    <i class="fas fa-futbol"></i>
-                    <span>Sports</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    
 
 
 
@@ -63,433 +24,65 @@
             </div>
 
             <!-- List of Products -->
-            <div class="product-grid" id="productGrid">
+            
 
-                <!-- Produit 1 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=1">
-                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" alt="Casque Audio Sans Fil Premium">
-                        </a>
-                        <span class="badge badge-sale">Promo</span>
+                <div class="product-grid" id="productGrid">
 
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-
-                            <a href="{{url_for('product.detail_product', product_id=1)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Electronics</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=1)}}">Casque Audio Sans Fil Premium</a>
-                        </h3>
-
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    {% for product in products %}
+                    
+                    <div class="product-card">
+                    
+                        <div class="product-image">
+                    
+                            <img src="{{ product.image_url }}"
+                                 alt="{{ product.name }}">
+                    
+                            <div class="product-actions-overlay">
+                    
+                                <a href="{{ url_for('product.detail_product',
+                                                    product_id=product.id) }}"
+                                   class="btn-icon">
+                    
+                                    <i class="fas fa-eye"></i>
+                    
+                                </a>
+                    
                             </div>
-                            <span>(128)</span>
+                    
                         </div>
-                        
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">149,99 €</span>
-                            <span class="old-price">199,99 €</span>
+                    
+                        <div class="product-content">
+                    
+                            <span class="product-category">
+                                {{ product.category }}
+                            </span>
+                    
+                            <h3 class="product-title">
+                    
+                                <a href="{{ url_for('product.detail_product',
+                                                    product_id=product.id) }}">
+                                    {{ product.name }}
+                                </a>
+                    
+                            </h3>
+                    
+                            <div class="product-footer">
+                    
+                                <div class="product-price">
+                                    <span class="current-price">
+                                        {{ product.price }} €
+                                    </span>
+                                </div>
+                    
                             </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-
+                    
                         </div>
-                    </div>
-                </div>
-
-                <!-- Produit 2 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=2">
-                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" alt="Montre Connectée Sport">
-                        </a>
-                        <span class="badge badge-new">New</span>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-
-                            <a href="{{url_for('product.detail_product', product_id=2)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Electronics</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=2)}}">Connected Watch</a>
-                        </h3>
-
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                            <span>(89)</span>
-                        </div>
-
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">299,00 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produit 3 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=3">
-                            <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400" alt="Sac à Dos Urbain">
-                        </a>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-
-                            <a href="{{url_for('product.detail_product', product_id=3)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
+                    
                     </div>
                     
-                    <div class="product-content">
-                        <span class="product-category">Accessories</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=3)}}">Backpac</a>
-                        </h3>
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star empty"></i>
-                            </div>
-                            <span>(56)</span>
-                        </div>
-
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">79,99 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-
-                        </div>
+                    {% endfor %}
+                    
                     </div>
-                </div>
-
-                <!-- Produit 4 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=4">
-                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" alt="Sneakers Running Elite">
-                        </a>
-                        <span class="badge badge-sale">Promo</span>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-
-                            <a href="{{url_for('product.detail_product', product_id=4)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Chaussures</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=4)}}">Sneakers Running Elite</a>
-                        </h3>
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <span>(234)</span>
-                        </div>
-
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">129,00 €</span>
-                            <span class="old-price">159,00 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produit 5 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=5">
-                            <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400" alt="Enceinte Bluetooth Portable">
-                        </a>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-
-                            <a href="{{url_for('product.detail_product', product_id=5)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Électronique</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=5)}}">Enceinte Bluetooth Portable</a>
-                        </h3>
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star empty"></i>
-                            </div>
-                            <span>(167)</span>
-                        </div>
-
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">89,99 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produit 6 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=6">
-                            <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" alt="Lunettes de Soleil Aviator">
-                        </a>
-                        <span class="badge badge-sale">Promo</span>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-                            
-                            <a href="{{url_for('product.detail_product', product_id=6)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Accessories</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=6)}}">Aviator sun glasses</a>
-                        </h3>
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                            <span>(45)</span>
-                        </div>
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">159,00 €</span>
-                            <span class="old-price">199,00 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produit 7 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=6">
-                            <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400" alt="Lunettes de Soleil Aviator">
-                        </a>
-                        <span class="badge badge-sale">Promo</span>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-                            
-                            <a href="{{url_for('product.detail_product', product_id=7)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Accessories</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=7)}}">Aviator sun glasses</a>
-                        </h3>
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                            <span>(45)</span>
-                        </div>
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">159,00 €</span>
-                            <span class="old-price">199,00 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produit 8 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <a href="product.html?id=6">
-                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400" alt="Lunettes de Soleil Aviator">
-                        </a>
-                        <span class="badge badge-sale">Promo</span>
-
-                        <div class="product-actions-overlay">
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="btn-icon" title="Ajouter au panier">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-                            
-                            <a href="{{url_for('product.detail_product', product_id=8)}}" class="btn-icon" title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                        </div>
-                    </div>
-
-                    <div class="product-content">
-                        <span class="product-category">Accessories</span>
-                        <h3 class="product-title">
-                            <a href="{{url_for('product.detail_product', product_id=8)}}">Aviator sun glasses</a>
-                        </h3>
-                        <div class="product-rating">
-                            <div class="stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                            <span>(45)</span>
-                        </div>
-                        <div class="product-footer">
-                            <div class="product-price">
-                            <span class="current-price">159,00 €</span>
-                            <span class="old-price">199,00 €</span>
-                            </div>
-
-                            <form action="/cart/add" method="post">
-                                <input type="hidden" name="product_id" value="5">
-
-                                <button type="submit" class="add-to-cart-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
 
 
 

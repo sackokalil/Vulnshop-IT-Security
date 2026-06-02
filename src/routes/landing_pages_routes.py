@@ -17,7 +17,7 @@ home_bp = Blueprint("home", __name__)
 @home_bp.route('/')
 @home_bp.route('/home')
 def home_page():
-    return render_template('shop/index.html')
+    return render_template('home.html')
 
 
 contact_bp = Blueprint('contact', __name__)
