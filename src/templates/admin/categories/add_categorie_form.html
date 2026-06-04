@@ -1,0 +1,53 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold text-primary">
+                Add Category
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                <div class="form-group">
+                    <label for="name">Category Name</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Electronics"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                        class="form-control"
+                        id="description"
+                        name="description"
+                        rows="5"
+                        placeholder="Describe this category..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-folder-plus mr-2"></i>
+                    Add Category
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

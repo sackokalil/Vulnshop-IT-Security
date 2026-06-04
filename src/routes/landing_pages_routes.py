@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import render_template
+from src.services.product_service import get_all_products
 
 admin_dash_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -17,7 +18,13 @@ home_bp = Blueprint("home", __name__)
 @home_bp.route('/')
 @home_bp.route('/home')
 def home_page():
-    return render_template('home.html')
+    products = get_all_products()
+
+    return render_template(
+        "home.html",
+        products=products
+    )
+    
 
 
 contact_bp = Blueprint('contact', __name__)

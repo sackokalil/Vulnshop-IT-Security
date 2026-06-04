@@ -1,0 +1,133 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Categories List
+        </h1>
+
+        <a href="{{ url_for('admin_product.add_category_form') }}"
+           class="btn btn-primary btn-sm shadow-sm">
+
+            <i class="fas fa-folder-plus fa-sm text-white-50 mr-1"></i>
+            Add Category
+
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                All Categories
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+
+                    <thead class="thead-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Category Name</th>
+                            <th>Description</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>1</td>
+                            <td>Electronics</td>
+                            <td>Smartphones, laptops, tablets and accessories.</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="#" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>2</td>
+                            <td>Fashion</td>
+                            <td>Clothing, shoes and fashion accessories.</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="#" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>3</td>
+                            <td>Gaming</td>
+                            <td>Gaming peripherals, consoles and accessories.</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="#" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>4</td>
+                            <td>Home & Living</td>
+                            <td>Furniture, decoration and home equipment.</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="#" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>5</td>
+                            <td>Sports</td>
+                            <td>Fitness equipment and outdoor products.</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="#" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

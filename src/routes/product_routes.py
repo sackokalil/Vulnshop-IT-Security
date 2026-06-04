@@ -12,6 +12,7 @@ product_bp = Blueprint(
 )
 
 
+
 @product_bp.route('/')
 def product_list():
 
@@ -34,12 +35,28 @@ def detail_product(product_id):
     )
 
 
+
+
+
 #-----------------------------------Admin part----------------------------------------------
 
 admin_product_bp = Blueprint("admin_product", __name__, url_prefix="/admin/products")
 
 
 @admin_product_bp.route("/")
-def admin_product_list():
-    return render_template("admin/products/list.html")
+def product_list():
+    return render_template("admin/products/products.html")
     #Diese route ist noch nicht werwendet worden
+
+
+@admin_product_bp.route("/add_product")
+def add_product_form():
+    return render_template("admin/products/add_product.html")
+
+@admin_product_bp.route('/add_category')
+def add_category_form():
+    return render_template('admin/categories/add_categorie_form.html')
+
+@admin_product_bp.route('/categories')
+def category_list():
+    return render_template('admin/categories/categories.html')
