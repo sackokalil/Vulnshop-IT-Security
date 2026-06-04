@@ -7,9 +7,11 @@ def init_db():
 
     with open("src/database/schema.sql") as f:
         conn.executescript(f.read())
+
     conn.close()
 
 
 def get_db_connection():
     conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
     return conn

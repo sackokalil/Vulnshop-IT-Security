@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Vulnerabilities Demo</h1>
+
+    <p>Select a vulnerability to test:</p>
+
+    <ul>
+        <li><a href="{{ url_for('vulnerability.xss_page') }}">XSS</a></li>
+        <li><a href="{{ url_for('vulnerability.sqli_page') }}">SQL Injection</a></li>
+        <li><a href="{{ url_for('vulnerability.csrf_page') }}">CSRF</a></li>
+        <li><a href="{{ url_for('vulnerability.idor_page') }}">IDOR</a></li>
+        <li><a href="{{ url_for('vulnerability.path_traversal_page') }}">Path Traversal</a></li>
+        <li><a href="{{ url_for('vulnerability.file_upload_page') }}">File Upload</a></li>
+        <li><a href="{{ url_for('vulnerability.file_upload_page') }}">brocken_auth</a></li>
+        
+        
+    </ul>
+
+</div>
+
+{% endblock %}

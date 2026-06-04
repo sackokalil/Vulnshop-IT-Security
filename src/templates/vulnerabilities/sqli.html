@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>SQL Injection Demo</h1>
+    <h3>Example attack:</h3>
+
+    <pre>
+       Username: admin
+       Password: ' OR '1'='1
+    </pre>
+
+    <p>
+        Try normal login or exploit SQL injection.
+    </p>
+
+    <form method="POST">
+
+        <input type="text"
+               name="username"
+               placeholder="Username">
+
+        <input type="password"
+               name="password"
+               placeholder="Password">
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
+    {% endif %}
+
+    {% if query %}
+        <h3>Executed SQL Query:</h3>
+        <pre>{{ query }}</pre>
+    {% endif %}
+
+    {% if result %}
+        <h3>Logged in user:</h3>
+
+        <p>ID: {{ result.id }}</p>
+        <p>Username: {{ result.username }}</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
