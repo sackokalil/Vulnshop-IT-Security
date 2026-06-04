@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>IDOR Demo</h1>
+
+    <p>
+        This page demonstrates an IDOR vulnerability. Any user can access
+        another user's profile by modifying the user_id parameter in the URL.
+    </p>
+
+    <p>
+        Try changing the URL:
+    </p>
+
+    <pre>
+/vulnerabilities/idor?user_id=1
+/vulnerabilities/idor?user_id=2
+/vulnerabilities/idor?user_id=3
+    </pre>
+
+    {% if user %}
+
+        <h3>User Profile</h3>
+
+        <p><strong>ID:</strong> {{ user_id }}</p>
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+
+    {% else %}
+
+        <p>User not found.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
