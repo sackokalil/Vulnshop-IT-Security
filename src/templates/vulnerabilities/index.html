@@ -15,12 +15,10 @@
         <li><a href="{{ url_for('vulnerability.idor_page') }}">IDOR</a></li>
         <li><a href="{{ url_for('vulnerability.path_traversal_page') }}">Path Traversal</a></li>
         <li><a href="{{ url_for('vulnerability.file_upload_page') }}">File Upload</a></li>
-        <li><a href="{{ url_for('vulnerability.file_upload_page') }}">brocken_auth</a></li>
-        
-        
-        
+        <li><a href="{{ url_for('vulnerability.stored_xss_page') }}">Stored XSS</a></li>
+        <li><a href="{{ url_for('vulnerability.sql_union_blind_page') }}">SQL Union und Blind SQLi</a></li>
+        <li><a href="{{ url_for('vulnerability.broken_auth_page') }}">Broken Authentication</a></li>
     </ul>
-
 </div>
 
 {% endblock %}
