@@ -5,6 +5,7 @@ from src.routes.auth_routes import login_bp, register_bp
 from src.routes.order_routes import admin_order_bp
 
 from src.routes.vulnerability_routes import vulnerability_bp
+from src.routes.user_routes import user_bp
 
 
 def create_app():
@@ -23,6 +24,8 @@ def create_app():
     app.register_blueprint(admin_order_bp)
 
     app.register_blueprint(vulnerability_bp)
+
+    app.register_blueprint(user_bp)
 
 
     return  app
