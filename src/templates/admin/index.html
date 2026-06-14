@@ -24,7 +24,9 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Users</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">40</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.users_count }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -42,7 +44,9 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Products</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">65</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.products_count }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-box fa-2x text-gray-300"></i>
@@ -62,7 +66,9 @@
                             </div>
                             <div class="row no-gutters align-items-center">
                                 <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50</div>
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                        {{ stats.orders_count }}
+                                    </div>
                                 </div>
                                 
                             </div>
@@ -83,7 +89,9 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                 Security challenges</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">10/10</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.security_challenges }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-shield-alt fa-2x text-gray-300"></i>
@@ -295,4 +303,9 @@
 </div>
 
 
+{% endblock %}
+
+{% block dashboard_scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/security-dashboard-chart.js') }}"></script>
 {% endblock %}

@@ -1,15 +1,6 @@
-from flask import Blueprint
-from flask import render_template
+from flask import Blueprint, render_template
 from src.services.product_service import get_all_products
-
-admin_dash_bp = Blueprint("admin", __name__, url_prefix="/admin")
-
-#-------------------Admin landing page--------------------
-
-@admin_dash_bp.route("/dashboard")
-def dashboard():
-    """Hier sollte geprüft werden, ob der User eine Admin-Role hat"""
-    return render_template("admin/index.html")
+from src.services.review_service import get_review_stats_for_products
 
 
 #-------------------UI ROUTES------------------------------
@@ -19,21 +10,18 @@ home_bp = Blueprint("home", __name__)
 @home_bp.route('/home')
 def home_page():
     products = get_all_products()
+    product_stats = get_review_stats_for_products(products)
 
     return render_template(
         "home.html",
-        products=products
+        products=products,
+        product_stats=product_stats
     )
     
-
 
 contact_bp = Blueprint('contact', __name__)
 @contact_bp.route('/contact')
 def contact_page():
     return render_template('shop/contact.html')
 
-cart_bp = Blueprint('cart', __name__)
-@cart_bp.route('/cart')
-def cart_page():
-    return render_template('shop/cart.html')
 

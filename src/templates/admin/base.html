@@ -20,7 +20,8 @@
     <!-- Custom styles for this template-->
     <link href="{{url_for('static', filename='css/sb-admin-2.min.css')}}" rel="stylesheet">
 
-    <link href="{{url_for('static', filename='style.css')}}" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 
 </head>
 
@@ -67,8 +68,8 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{url_for('admin_product.product_list')}}">Products</a>
-                        <a class="collapse-item" href="{{url_for('admin_product.category_list')}}">Categories</a>
+                        <a class="collapse-item" href="{{url_for('admin_product.admin_product_list')}}">Products</a>
+                        <a class="collapse-item" href="{{url_for('admin_category.category_list')}}">Categories</a>
                         <a class="collapse-item" href="{{url_for('admin_order.order_list')}}">Orders</a>
                     </div>
                 </div>
@@ -404,33 +405,30 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="{{ url_for('logout.logout') }}">Logout</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="{{url_for('static', filename='vendor/jquery/jquery.min.js')}}"></script>
-    <script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{{url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js')}}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{{url_for('static', filename='js/sb-admin-2.min.js')}}"></script>
-
-    <!-- Page level plugins -->
-    <script src="{{url_for('static', filename='vendor/chart.js/Chart.min.js')}}"></script>
 
 
 
 
 
-    <!-- Page level custom scripts -->
-     <script src="{{url_for('static', filename='js/security-dashboard-chart.js')}}"></script>
-    <!--<script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>-->
+
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+
+
+
+{% block scripts %}{% endblock %}
+{% block dashboard_scripts %}{% endblock %}
 
 </body>
 

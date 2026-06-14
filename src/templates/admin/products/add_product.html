@@ -15,6 +15,21 @@
 
         <div class="card-body">
 
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <form method="POST">
 
                 <div class="form-group">
@@ -54,12 +69,24 @@
 
                     <div class="form-group col-md-6">
                         <label for="category">Category</label>
-                        <input
-                            type="text"
+
+                        <select
                             class="form-control"
                             id="category"
                             name="category"
-                            placeholder="Electronics">
+                            required>
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                            {% for category in categories %}
+                                <option value="{{ category['name'] }}">
+                                    {{ category['name'] }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
                     </div>
 
                 </div>

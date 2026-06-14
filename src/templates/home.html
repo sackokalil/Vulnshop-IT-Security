@@ -2,6 +2,15 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
  <!-- Hero Section -->
     <section class="hero hero-carousel">
@@ -15,9 +24,9 @@
             <!--<span class="hero-badge">New collection</span>-->
             <h1>Welcome to VulnShop</h1>
             <p>Discover our exceptional products selection</p>
-            <a href="{{ url_for('product.product_list') }}" class="btn btn-primary">
-              See products
-             </a>
+            <a href="#products" class="btn btn-primary">
+                See products
+            </a>
         </div>
     </section>
 
@@ -70,7 +79,7 @@
             <!-- List of Products -->
             
 
-                <div class="product-grid" id="productGrid">
+                 <div class="product-grid" id="productGrid">
 
                     {% for product in products %}
                     
@@ -83,6 +92,14 @@
                     
                             <div class="product-actions-overlay">
                     
+                                <form action="{{ url_for('cart.add_cart_item', product_id=product.id) }}" method="post">
+                                    <input type="hidden" name="quantity" value="1">
+
+                                    <button type="submit" class="btn-icon" title="Ajouter au panier">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+
                                 <a href="{{ url_for('product.detail_product',
                                                     product_id=product.id) }}"
                                    class="btn-icon">
@@ -109,7 +126,25 @@
                                 </a>
                     
                             </h3>
-                    
+
+
+                            {% set stats = product_stats[product.id] %}
+
+                            <div class="product-rating">
+                                <div class="stars">
+                                    {% for i in range(stats.average_rating) %}
+                                        <i class="fas fa-star"></i>
+                                    {% endfor %}
+
+                                    {% for i in range(5 - stats.average_rating) %}
+                                        <i class="far fa-star"></i>
+                                    {% endfor %}
+                                </div>
+
+                                <span>({{ stats.review_count }})</span>
+                            </div>
+                                          
+                            
                             <div class="product-footer">
                     
                                 <div class="product-price">
@@ -117,6 +152,14 @@
                                         {{ product.price }} €
                                     </span>
                                 </div>
+
+                                <form action="{{ url_for('cart.add_cart_item', product_id=product.id) }}" method="post">
+                                    <input type="hidden" name="quantity" value="1">
+
+                                    <button type="submit" class="btn-icon" title="Add to cart">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </form>
                     
                             </div>
                     
@@ -126,7 +169,7 @@
                     
                     {% endfor %}
                     
-                    </div>
+                </div>
 
 
 

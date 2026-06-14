@@ -1,22 +1,19 @@
-from src.database.db import get_db_connection
+from src.services.user_service import get_user_by_email
+from flask import session
 
-def vulnerable_login(username, password):
-    conn = get_db_connection()
 
-    query = f"""
-        SELECT * FROM users
-        WHERE username = '{username}'
-        AND password = '{password}'
-    """
+def authenticate_user(email, password):
+    user = get_user_by_email(email)
 
-    print("Executed SQL Query:")
-    print(query)
+    if not user:
+        return None
 
-    user = conn.execute(query).fetchone()
+    if user["password"] != password:
+        return None
 
-    print("RESULT:")
-    print(user)
+    return user
 
-    conn.close()
 
-    return user, query
+
+def logout_user():
+    session.clear()

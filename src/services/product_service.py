@@ -1,46 +1,49 @@
-from src.database.db import get_db_connection
+from src.models.product import (
+    create_products_table,
+    insert_product,
+    select_all_products,
+    select_product_by_id,
+    update_product,
+    delete_product_by_id
+)
+
+
+def create_product(name, description, price, category, image_url):
+    create_products_table()
+
+    insert_product(
+        name=name,
+        description=description,
+        price=price,
+        category=category,
+        image_url=image_url
+    )
 
 
 def get_all_products():
-
-    conn = get_db_connection()
-
-    conn.row_factory = lambda cursor, row: {
-        "id": row[0],
-        "name": row[1],
-        "description": row[2],
-        "price": row[3],
-        "category": row[4],
-        "image_url": row[5]
-    }
-
-    products = conn.execute(
-        "SELECT * FROM products"
-    ).fetchall()
-
-    conn.close()
-
-    return products
+    create_products_table()
+    return select_all_products()
 
 
 def get_product_by_id(product_id):
+    create_products_table()
+    return select_product_by_id(product_id)
 
-    conn = get_db_connection()
 
-    conn.row_factory = lambda cursor, row: {
-        "id": row[0],
-        "name": row[1],
-        "description": row[2],
-        "price": row[3],
-        "category": row[4],
-        "image_url": row[5]
-    }
 
-    product = conn.execute(
-        "SELECT * FROM products WHERE id = ?",
-        (product_id,)
-    ).fetchone()
+def edit_product(product_id, name, description, price, category, image_url):
+    create_products_table()
 
-    conn.close()
+    update_product(
+        product_id=product_id,
+        name=name,
+        description=description,
+        price=price,
+        category=category,
+        image_url=image_url
+    )
 
-    return product
+
+def remove_product(product_id):
+    create_products_table()
+    delete_product_by_id(product_id)

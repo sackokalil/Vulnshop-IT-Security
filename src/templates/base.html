@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+
+
 </head>
 <body>
     <!-- Header -->
@@ -28,23 +30,60 @@
                     Contact
                 </a>
 
-                
+                <a href="{{url_for('home.home_page')}}"
+                    class="nav-link {% if request.endpoint == 'vulnerability.vulnerability_page' %}active{% endif %}">
+                    Vulnerabilities
+                </a>
 
                 <!-- DROPDOWN -->
                 <div class="dropdown">
                     <button class="dropdown-btn">
-                        Account <i class="fas fa-chevron-down"></i>
+                        {% if session.get("user_id") %}
+                            {{ session.get("username") }}
+                        {% else %}
+                            Account
+                        {% endif %}
+                        <i class="fas fa-chevron-down"></i>
                     </button>
 
                     <div class="dropdown-content">
-                        <a href="{{url_for('login.login_page')}}">Login</a>
-                        <a href="{{url_for('register.register_page')}}">Register</a>
+
+                        {% if session.get("user_id") %}
+
+                            <a href="{{ url_for('profile.profile_page') }}">
+                                Profile
+                            </a>
+
+                            <a href="{{ url_for('order.my_orders') }}">
+                                My Orders
+                            </a>
+
+                            {% if session.get("role") == "Admin" %}
+                                <a href="{{ url_for('admin.dashboard') }}">
+                                    Admin Dashboard
+                                </a>
+                            {% endif %}
+
+                            <a href="{{ url_for('logout.logout') }}">
+                                Logout
+                            </a>
+
+                        {% else %}
+
+                            <a href="{{ url_for('login.login_page') }}">
+                                Login
+                            </a>
+
+                            <a href="{{ url_for('register.register_page') }}">
+                                Register
+                            </a>
+
+                        {% endif %}
+
                     </div>
                 </div>
 
-                <a href="{{ url_for('vulnerability.vulnerability_home') }}">
-                    Vulnerabilities
-                </a>
+                
 
             </nav>
 

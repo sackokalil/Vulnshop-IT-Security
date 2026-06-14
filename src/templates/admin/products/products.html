@@ -14,6 +14,20 @@
             </a>
         </div>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
@@ -38,142 +52,39 @@
                         </thead>
 
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Wireless Headphones</td>
-                                <td>Bluetooth headphones with noise reduction.</td>
-                                <td>59.99 €</td>
-                                <td>Electronics</td>
-                                <td>headphones.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                            {% if products %}
+                                {% for product in products %}
+                                    <tr>
+                                        <td>{{ product.id }}</td>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.description }}</td>
+                                        <td>{{ product.price }} €</td>
+                                        <td>{{ product.category }}</td>
+                                        <td>{{ product.image_url }}</td>
 
-                            <tr>
-                                <td>2</td>
-                                <td>Smart Watch</td>
-                                <td>Fitness tracking and notifications.</td>
-                                <td>89.99 €</td>
-                                <td>Accessories</td>
-                                <td>watch.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                                        <td class="text-center">
+                                            <a href="{{ url_for('admin_product.edit_product_form', product_id=product.id) }}"
+                                            class="btn btn-warning btn-sm mr-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
 
-                            <tr>
-                                <td>3</td>
-                                <td>Gaming Mouse</td>
-                                <td>RGB mouse with high precision sensor.</td>
-                                <td>34.50 €</td>
-                                <td>Gaming</td>
-                                <td>mouse.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>4</td>
-                                <td>Laptop Backpack</td>
-                                <td>Water-resistant backpack for laptops.</td>
-                                <td>45.00 €</td>
-                                <td>Bags</td>
-                                <td>backpack.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>5</td>
-                                <td>USB-C Charger</td>
-                                <td>Fast charger with 65W power delivery.</td>
-                                <td>29.99 €</td>
-                                <td>Electronics</td>
-                                <td>charger.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>6</td>
-                                <td>Running Shoes</td>
-                                <td>Comfortable shoes for daily training.</td>
-                                <td>74.90 €</td>
-                                <td>Fashion</td>
-                                <td>shoes.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>7</td>
-                                <td>Desk Lamp</td>
-                                <td>LED desk lamp with adjustable brightness.</td>
-                                <td>22.99 €</td>
-                                <td>Home</td>
-                                <td>lamp.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>8</td>
-                                <td>Mechanical Keyboard</td>
-                                <td>Backlit keyboard with blue switches.</td>
-                                <td>99.00 €</td>
-                                <td>Gaming</td>
-                                <td>keyboard.jpg</td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                                            <a href="{{ url_for('admin_product.delete_product', product_id=product.id) }}"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to delete this product?');">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        No products found.
+                                    </td>
+                                </tr>
+                            {% endif %}
                         </tbody>
+
                     </table>
 
                 </div>

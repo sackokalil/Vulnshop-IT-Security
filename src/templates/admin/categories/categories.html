@@ -9,7 +9,7 @@
             Categories List
         </h1>
 
-        <a href="{{ url_for('admin_product.add_category_form') }}"
+        <a href="{{ url_for('admin_category.add_category_form') }}"
            class="btn btn-primary btn-sm shadow-sm">
 
             <i class="fas fa-folder-plus fa-sm text-white-50 mr-1"></i>
@@ -17,6 +17,20 @@
 
         </a>
     </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <div class="card shadow mb-4">
 
@@ -41,82 +55,27 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                   <tbody>
+                        {% for category in categories %}
+                            <tr>
+                                <td>{{ category["id"] }}</td>
+                                <td>{{ category["name"] }}</td>
+                                <td>{{ category["description"] }}</td>
 
-                        <tr>
-                            <td>1</td>
-                            <td>Electronics</td>
-                            <td>Smartphones, laptops, tablets and accessories.</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-warning btn-sm mr-1">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                <td class="text-center">
+                                    <a href="{{ url_for('admin_category.edit_category_form', category_id=category.id) }}"
+                                        class="btn btn-warning btn-sm mr-1">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
 
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>2</td>
-                            <td>Fashion</td>
-                            <td>Clothing, shoes and fashion accessories.</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-warning btn-sm mr-1">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>3</td>
-                            <td>Gaming</td>
-                            <td>Gaming peripherals, consoles and accessories.</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-warning btn-sm mr-1">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>4</td>
-                            <td>Home & Living</td>
-                            <td>Furniture, decoration and home equipment.</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-warning btn-sm mr-1">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>5</td>
-                            <td>Sports</td>
-                            <td>Fitness equipment and outdoor products.</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-warning btn-sm mr-1">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
+                                    <a href="{{ url_for('admin_category.delete_category', category_id=category.id) }}"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this category?');">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
 
                     </tbody>
 

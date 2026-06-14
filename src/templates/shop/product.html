@@ -3,6 +3,18 @@
 
 {% block content %}
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+
      <div class="breadcrumb">
         <div class="container">
             <a href="{{url_for('home.home_page')}}">Home</a>
@@ -36,16 +48,21 @@
                 <div class="product-info">
                     <h1>{{ product.name }}</h1>
 
+
                     <div class="product-rating">
                         <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                            {% for i in range(review_stats.average_rating) %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+
+                            {% for i in range(5 - review_stats.average_rating) %}
+                                <i class="far fa-star"></i>
+                            {% endfor %}
                         </div>
-                        <span>(128 reviews)</span>
+
+                        <span>({{ review_stats.review_count }} reviews)</span>
                     </div>
+
 
                     <div class="product-price">
                         <img src="{{ product.image_url }}"
@@ -57,60 +74,53 @@
                         {{ product.description }}
                     </p>
 
-                    <div class="product-options">
-                        <!--
-                        <div class="option-group">
-                            <label>Couleur</label>
-                            <div class="color-options">
-                                <div class="color-option active" style="background-color: #111;"></div>
-                                <div class="color-option" style="background-color: #ddd;"></div>
-                                <div class="color-option" style="background-color: #2563eb;"></div>
-                            </div>
-                        </div>
-
-                        <div class="option-group">
-                            <label>Taille</label>
-                            <div class="size-options">
-                                <div class="size-option active">Standard</div>
-                                <div class="size-option">Large</div>
-                            </div>
-                        </div>
-                        -->
+                    <form action="{{ url_for('cart.add_cart_item', product_id=product.id) }}"
+                        method="post">
 
                         <div class="option-group">
                             <label>Quantity</label>
+
                             <div class="quantity-selector">
-                                <button class="qty-btn">-</button>
-                                <input type="number" value="1" min="1">
-                                <button class="qty-btn">+</button>
+                                <input type="number"
+                                    name="quantity"
+                                    value="1"
+                                    min="1">
                             </div>
                         </div>
 
-                    </div>
+                        <div class="product-actions">
 
-                    <div class="product-actions">
-                        <button class="btn btn-primary btn-lg">
-                            <i class="fas fa-shopping-cart"></i>
-                            Add to cart
-                        </button>
+                            <button type="submit"
+                                    class="btn btn-primary btn-lg">
 
-                        <button class="btn btn-outline">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
+                                <i class="fas fa-shopping-cart"></i>
+                                Add to cart
+
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-outline">
+
+                                <i class="far fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                    </form>
 
                     <div class="product-meta">
                         <div class="meta-item">
                             <i class="fas fa-truck"></i>
-                            <span>Livraison gratuite dès 50€</span>
+                            <span>Free delivery from 50€</span>
                         </div>
                         <div class="meta-item">
                             <i class="fas fa-undo"></i>
-                            <span>Retours gratuits sous 30 jours</span>
+                            <span>Free return in 30 days</span>
                         </div>
                         <div class="meta-item">
                             <i class="fas fa-shield-alt"></i>
-                            <span>Garantie 2 ans</span>
+                            <span>2 Years garanty</span>
                         </div>
                     </div>
                 </div>
@@ -123,58 +133,53 @@
                     <div class="tab-pane active">
                         <h3>Description</h3>
                         <p>
-                            Ce casque audio sans fil offre une excellente qualité sonore,
-                            une autonomie longue durée et un design confortable pour une utilisation quotidienne.
+                            {{ product.description }}
                         </p>
                     </div>
 
                     <div class="tab-pane active">
-                        <h3>Caractéristiques</h3>
-                        <table class="specs-table">
-                            <tr>
-                                <td>Marque</td>
-                                <td>VulnShop Audio</td>
-                            </tr>
-                            <tr>
-                                <td>Connexion</td>
-                                <td>Bluetooth</td>
-                            </tr>
-                            <tr>
-                                <td>Autonomie</td>
-                                <td>30 heures</td>
-                            </tr>
-                            <tr>
-                                <td>Réduction de bruit</td>
-                                <td>Oui</td>
-                            </tr>
-                        </table>
+                        <h3>Caracteristics</h3>
+                        <p>No specifications available for this product yet.</p>
                     </div>
 
                     <div class="tab-pane active">
                         <h3>Reviews</h3>
 
-                        <div class="review-item">
-                            <div class="review-header">
-                                <span class="reviewer">Marie D.</span>
-                                <span class="review-date">Il y a 2 jours</span>
-                            </div>
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <p class="review-text">
-                                Très bon produit, son propre et confortable.
-                            </p>
-                        </div>
+                        {% if reviews %}
+                            {% for review in reviews %}
+                                <div class="review-item">
+
+                                    <div class="review-header">
+                                        <span class="reviewer">
+                                            {{ review.reviewer_name }}
+                                        </span>
+
+                                        <span class="review-date">
+                                            {{ review.created_at }}
+                                        </span>
+                                    </div>
+
+                                    <div class="stars">
+                                        {% for i in range(review.rating) %}
+                                            <i class="fas fa-star"></i>
+                                        {% endfor %}
+                                    </div>
+
+                                    <p class="review-text">
+                                        {{ review.comment }}
+                                    </p>
+
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No reviews yet. Be the first to review this product.</p>
+                        {% endif %}
 
                         <!--Form to add a comment about the product-->
                         <div class="review-form">
                             <h3>Add a review</h3>
 
-                            <form action="#" method="post">
+                            <form action="{{ url_for('review.add_review', product_id=product.id) }}" method="post">
                                 <div class="form-group">
                                     <label for="reviewerName">Name</label>
                                     <input type="text" id="reviewerName" name="reviewerName" placeholder="Votre nom">
