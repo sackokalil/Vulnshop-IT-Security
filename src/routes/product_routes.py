@@ -1,5 +1,8 @@
-from flask import Blueprint, render_template, url_for, flash, redirect, request
+from flask import Blueprint, render_template, url_for, flash, redirect, request, current_app
 from src.services.category_service import get_all_categories
+import os
+from werkzeug.utils import secure_filename
+
 
 from src.services.product_service import (
     get_all_products,
@@ -21,17 +24,6 @@ product_bp = Blueprint(
     url_prefix='/products'
 )
 
-@product_bp.route('/')
-def product_list():
-
-    products = get_all_products()
-
-    return render_template(
-        "shop/index.html",
-        products=products
-    )
-
-
 
 @product_bp.route('/<int:product_id>')
 def detail_product(product_id):
@@ -47,6 +39,42 @@ def detail_product(product_id):
         review_stats=review_stats
     )
 
+
+
+#-----------help functions to Saving product image in static/uploads/products Ordner--------------
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+
+def save_product_image(image_file):
+    if not image_file or image_file.filename == "":
+        return None
+
+    if not allowed_file(image_file.filename):
+        return None
+
+    filename = secure_filename(image_file.filename)
+
+    upload_folder = os.path.join(
+        current_app.root_path,
+        "static",
+        "uploads",
+        "products"
+    )
+
+    os.makedirs(upload_folder, exist_ok=True)
+
+    image_path = os.path.join(upload_folder, filename)
+    image_file.save(image_path)
+
+    return f"uploads/products/{filename}"
 
 
 
@@ -77,7 +105,13 @@ def add_product_form():
         description = request.form.get("description")
         price = request.form.get("price")
         category = request.form.get("category")
-        image_url = request.form.get("image_url")
+
+        #image saving
+        image_file = request.files.get("image_file")
+        image_url = save_product_image(image_file)
+        if not image_url:
+            flash("Please upload a valid image file.", "danger")
+            return redirect(url_for("admin_product.add_product_form"))
 
         create_product(name, description, price, category, image_url)
 
@@ -89,6 +123,8 @@ def add_product_form():
         "admin/products/add_product.html",
         categories=categories
     )
+
+
 
 @admin_product_bp.route("/<int:product_id>/edit", methods=["GET", "POST"])
 def edit_product_form(product_id):

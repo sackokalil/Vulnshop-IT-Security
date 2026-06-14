@@ -39,7 +39,7 @@
 
                     <div class="thumbnail-grid">
                         <div class="thumbnail active">
-                            <img src="{{ product.image_url }}"
+                            <img src="{{url_for('static', filename=product.image_url) }}"
                               alt="{{ product.name }}">
                         </div>
                     </div>
@@ -65,7 +65,7 @@
 
 
                     <div class="product-price">
-                        <img src="{{ product.image_url }}"
+                        <img src="{{url_for('static', filename=product.image_url) }}"
                          alt="{{ product.name }}">
                         
                     </div>

@@ -45,7 +45,7 @@
                             <div class="cart-item">
 
                                 <div class="cart-product">
-                                    <img src="{{ item.image_url }}"
+                                    <img src="{{url_for('static', filename=item.image_url) }}"
                                          alt="{{ item.name }}">
 
                                     <div class="cart-product-info">
@@ -92,7 +92,7 @@
                         <i class="fas fa-shopping-cart"></i>
                         <h3>Your cart is empty</h3>
                         <p>Discover our products and start shopping !</p>
-                        <a href="{{ url_for('home.home_page') }}"
+                        <a href="{{ url_for('home.home_page') }}#products"
                            class="btn btn-primary">
                             Continue shopping
                         </a>
@@ -148,7 +148,7 @@
 
 <section class="continue-shopping">
     <div class="container">
-        <a href="{{ url_for('home.home_page') }}" class="continue-link">
+        <a href="{{ url_for('home.home_page') }}#products" class="continue-link">
             <i class="fas fa-arrow-left"></i>
             Continue shoping
         </a>
