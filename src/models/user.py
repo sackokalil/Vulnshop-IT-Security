@@ -89,3 +89,70 @@ def insert_user_by_admin(first_name, last_name, username, email, password, role,
 
     conn.commit()
     conn.close()
+
+
+def select_user_by_id(user_id):
+    conn = get_db_connection()
+
+    user = conn.execute("""
+        SELECT id, first_name, last_name, username, email, role, status, created_at
+        FROM users
+        WHERE id = ?
+    """, (user_id,)).fetchone()
+
+    conn.close()
+    return user
+
+
+def update_user_by_id(user_id, first_name, last_name, username, email, role, status):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE users
+        SET first_name = ?,
+            last_name = ?,
+            username = ?,
+            email = ?,
+            role = ?,
+            status = ?
+        WHERE id = ?
+    """, (
+        first_name,
+        last_name,
+        username,
+        email,
+        role,
+        status,
+        user_id
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+def update_user_status_by_id(user_id, status):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE users
+        SET status = ?
+        WHERE id = ?
+    """, (status, user_id))
+
+    conn.commit()
+    conn.close()
+
+
+def delete_user_by_id(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM users
+        WHERE id = ?
+    """, (user_id,))
+
+    conn.commit()
+    conn.close()

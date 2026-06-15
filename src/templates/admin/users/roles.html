@@ -1,0 +1,85 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        Roles Management
+    </h1>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Available Roles
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                Roles define what actions a user can perform within VulnShop.
+            </p>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered">
+
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Role</th>
+                            <th>Description</th>
+                            <th>Permissions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>
+                                <span class="badge badge-danger">
+                                    Admin
+                                </span>
+                            </td>
+
+                            <td>
+                                Full access to the application.
+                            </td>
+
+                            <td>
+                                Manage products, categories, orders, users,
+                                reviews and security settings.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span class="badge badge-primary">
+                                    User
+                                </span>
+                            </td>
+
+                            <td>
+                                Standard customer account.
+                            </td>
+
+                            <td>
+                                Browse products, manage cart,
+                                place orders and submit reviews.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

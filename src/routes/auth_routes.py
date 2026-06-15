@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from src.services.user_service import create_user, get_user_by_email
 from src.services.auth_service import authenticate_user
 from src.services.auth_service import authenticate_user, logout_user
+import uuid
+from src.services.session_service import create_session, end_session
 
 
 login_bp = Blueprint('login', __name__)
@@ -43,6 +45,16 @@ def login_page():
         session["username"] = user["username"]
         session["email"] = user["email"]
         session["role"] = user["role"]
+
+        session_token = str(uuid.uuid4())
+        session["session_token"] = session_token
+
+        create_session(
+            user_id=user["id"],
+            session_token=session_token,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent")
+        )
 
         #flash("Login successful.", "success")
 
@@ -103,6 +115,12 @@ def register_page():
 logout_bp = Blueprint('logout', __name__)
 @logout_bp.route("/logout")
 def logout():
+    session_token = session.get("session_token")
+
+    if session_token:
+        end_session(session_token)
+
     logout_user()
+
     flash("You have been logged out.", "success")
     return redirect(url_for("login.login_page"))

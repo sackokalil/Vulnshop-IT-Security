@@ -86,8 +86,13 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{url_for('admin_user.user_list')}}">Users</a>
-                        <a class="collapse-item" href="#">Roles</a>
-                        <a class="collapse-item" href="#">Sessions</a>
+                        <a class="collapse-item" href="{{ url_for('admin_user.roles_page') }}">
+                            Roles
+                        </a>
+
+                        <a class="collapse-item" href="{{ url_for('admin_user.sessions_page') }}">
+                            Sessions
+                        </a>
                     </div>
                 </div>
             </li>
