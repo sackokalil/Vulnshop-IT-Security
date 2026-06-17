@@ -1,0 +1,306 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        Insecure Direct Object Reference (IDOR)
+    </h1>
+
+    <div class="alert alert-warning">
+        <strong>Security Lab:</strong>
+        This page documents an intentionally implemented IDOR vulnerability in VulnShop
+        for educational and demonstration purposes.
+    </div>
+
+    <!-- IDOR Section -->
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                1. IDOR - Unauthorized Order Access
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Description</h5>
+            <p>
+                IDOR occurs when an application exposes a direct object identifier,
+                such as an order ID, user ID, or file ID, and does not verify whether
+                the authenticated user is allowed to access that object.
+            </p>
+
+            <p>
+                In this vulnerability, a logged-in user can manually modify the
+                <code>order_id</code> in the URL and access another user's order details.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+            <pre><code>GET /orders/&lt;order_id&gt;</code></pre>
+
+            <h5>Affected Route</h5>
+            <pre><code>src/routes/order_routes.py</code></pre>
+
+            <h5>Affected Template</h5>
+            <pre><code>templates/shop/order_detail.html</code></pre>
+
+            <h5>Affected Model / Service</h5>
+            <pre><code>
+src/models/order.py
+src/services/order_service.py
+            </code></pre>
+
+            <h5>Vulnerable Code</h5>
+            <pre><code>
+@order_bp.route("/&lt;int:order_id&gt;")
+def order_detail(order_id):
+
+    # The application checks if the user is logged in.
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login.login_page"))
+
+    # The order_id comes directly from the URL.
+    # Example:
+    # /orders/1
+    # /orders/2
+    order, items = get_order_details(order_id)
+
+    # VULNERABILITY:
+    # The application does not check if this order belongs
+    # to the currently logged-in user.
+    #
+    # Missing check:
+    # if order["user_id"] != session["user_id"]:
+    #     abort(403)
+
+    return render_template(
+        "shop/order_detail.html",
+        order=order,
+        items=items
+    )
+            </code></pre>
+
+            <p>
+                The application verifies authentication, but not authorization.
+                This means the user must be logged in, but the application does not verify
+                whether the requested order belongs to that user.
+            </p>
+
+            <h5>Manual Exploitation Scenario</h5>
+
+            <pre><code>
+1. Login as User A
+2. Create an order
+3. Visit: /orders  to see user A's order_id
+
+4. Logout
+5. Login as User B
+
+6. While logged in as User B, manually change the URL to:
+
+   /orders/user_A_order_id
+            </code></pre>
+
+            <h5>Expected Vulnerable Result</h5>
+            <p>
+                If User B can see Order #user_A_order_id, which belongs to User A, then the IDOR
+                vulnerability is successfully exploited.
+            </p>
+
+
+            <h5>Impact</h5>
+            <ul>
+                <li>Unauthorized access to another user's order details</li>
+                <li>Exposure of sensitive customer information</li>
+                <li>Violation of confidentiality</li>
+                <li>Possible data leakage through predictable object IDs</li>
+                <li>Broken authorization logic</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+            <p>
+                The application must verify that the requested object belongs to the
+                currently authenticated user before displaying it.
+            </p>
+
+            <pre><code>
+from flask import abort
+
+@order_bp.route("/&lt;int:order_id&gt;")
+def order_detail(order_id):
+
+    # Check authentication.
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login.login_page"))
+
+    # Get the requested order.
+    order, items = get_order_details(order_id)
+
+    # Return 404 if the order does not exist.
+    if not order:
+        abort(404)
+
+    # SECURITY FIX:
+    # Check authorization.
+    # The logged-in user must be the owner of the requested order.
+    if order["user_id"] != session["user_id"]:
+
+        create_security_event(
+            event_type="IDOR_BLOCKED",
+            severity="High",
+            description=f"Blocked IDOR attempt: User {session['user_id']} tried to access order {order_id} owned by user {order['user_id']}.",
+            user_id=session["user_id"],
+            endpoint=request.path,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent")
+        )
+
+        abort(403)
+
+    return render_template(
+        "shop/order_detail.html",
+        order=order,
+        items=items
+    )
+            </code></pre>
+
+            <h5>Files Involved</h5>
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>src/routes/order_routes.py</td>
+                        <td>Receives the vulnerable <code>order_id</code> from the URL.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/services/order_service.py</td>
+                        <td>Retrieves order details from the database.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/order.py</td>
+                        <td>Queries the <code>orders</code> and <code>order_items</code> tables.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/shop/my_orders.html</td>
+                        <td>Displays links to the user's own orders.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/shop/order_detail.html</td>
+                        <td>Displays the order details after the vulnerable access.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/security_event.py</td>
+                        <td>Stores detected IDOR attempts in the security events table.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/services/security_event_service.py</td>
+                        <td>Creates and retrieves security events for the dashboard.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/security_lab/idor.html</td>
+                        <td>This file. It documents the IDOR vulnerability and its mitigation.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <p>
+                Instead of manually modifying the URL in the browser, the vulnerability
+                can also be exploited automatically using a Python script.
+            </p>
+
+            <h6>Exploit File</h6>
+
+            <pre><code>
+            exploits/idor_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+            cd exploits
+            python idor_exploit.py
+            </code></pre>
+
+            <h6>What the Script Does</h6>
+
+            <ul>
+                <li>Logs in as a legitimate user.</li>
+                <li>Maintains the authenticated session.</li>
+                <li>Requests another user's order by manipulating the order ID.</li>
+                <li>Checks whether the vulnerable application returns the order details.</li>
+                <li>Confirms the IDOR vulnerability if unauthorized data is exposed.</li>
+            </ul>
+
+            <h6>Target Endpoint</h6>
+
+            <pre><code>
+            GET /orders/&lt;order_id&gt;
+            </code></pre>
+
+            <h6>Example Configuration</h6>
+
+            <pre><code>
+            ATTACKER_EMAIL = "user@test.com"
+            ATTACKER_PASSWORD = "123456"
+
+            VICTIM_ORDER_ID = 12
+            </code></pre>
+
+            <h6>Expected Result</h6>
+
+            <p>
+                After running the exploit script, the attacker is authenticated as
+                <code>user@test.com</code> and attempts to access
+                <code>/orders/12</code>.
+            </p>
+
+            <p>
+                If the application returns Order #12 even though it belongs to another user,
+                the script prints:
+            </p>
+
+            <pre><code>
+            [+] Victim order page is accessible.
+            [+] IDOR vulnerability confirmed.
+            [+] The attacker accessed an order that does not belong to them.
+            </code></pre>
+
+            <p>
+                Additionally, the attack can be recorded in the
+                <strong>security_events</strong> table and displayed in the
+                <strong>Recent Security Events</strong> dashboard section.
+            </p>
+
+
+
+
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

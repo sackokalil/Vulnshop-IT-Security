@@ -10,6 +10,7 @@ from src.services.order_service import (
     change_order_status,
     remove_order
 )
+from src.services.security_event_service import create_security_event
 
 
 order_bp = Blueprint(
@@ -50,13 +51,38 @@ def create_order():
     return redirect(url_for("order.my_orders"))
 
 
+
+#---Vulnerable route---------
 @order_bp.route("/<int:order_id>")
 def order_detail(order_id):
+
+    # Only authenticated users can access the order detail page.
     if "user_id" not in session:
         flash("Please login first.", "warning")
         return redirect(url_for("login.login_page"))
 
+    # The order_id is taken from the URL.
+    # Example: /orders/1
+    # A malicious user can change it manually to /orders/2.
     order, items = get_order_details(order_id)
+
+    # If the order does not exist, stop the request.
+    if not order:
+        flash("Order not found.", "danger")
+        return redirect(url_for("order.my_orders"))
+
+    # We compare the owner of the order with the logged-in user.
+    if order["user_id"] != session["user_id"]:
+        # We log the suspicious access as a security event.
+        create_security_event(
+            event_type="IDOR_SUCCESS",
+            severity="High",
+            description=f"User {session['user_id']} accessed order {order_id} owned by user {order['user_id']}.",
+            user_id=session["user_id"],
+            endpoint=request.path,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent")
+        )
 
     return render_template(
         "shop/order_detail.html",
@@ -65,7 +91,7 @@ def order_detail(order_id):
     )
 
 
-# ------------------ Admin part ------------------
+# ======================== Admin part =============================
 
 admin_order_bp = Blueprint(
     "admin_order",

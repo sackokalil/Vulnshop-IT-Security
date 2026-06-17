@@ -9,9 +9,12 @@ from src.routes.category_route import admin_category_bp
 from src.routes.cart_routes import cart_bp
 from src.routes.review_routes import review_bp
 
-
-
 from src.routes.user_routes import admin_user_bp
+
+from src.routes.vulnerabilities_routes import (
+    admin_vulnerability_bp
+)
+
 
 
 def create_app():
@@ -43,6 +46,10 @@ def create_app():
    
 
     app.register_blueprint(admin_user_bp)
+
+
+    app.register_blueprint(admin_vulnerability_bp)
+
 
 
     return  app

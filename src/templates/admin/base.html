@@ -101,17 +101,19 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSecurities"
                     aria-expanded="true" aria-controls="collapseSecurities">
-                    <i class="fas fa-fw fa-users"></i>
+                    <i class="fas fa-shield-alt"></i>
                     <span>Security Lab</span>
                 </a>
                 <div id="collapseSecurities" class="collapse" aria-labelledby="headingSecurities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.vulnerability_dashboard') }}">Dashboard</a>
                         <a class="collapse-item" href="#">SQL Injection</a>
-                        <a class="collapse-item" href="#">XSS</a>
-                        <a class="collapse-item" href="#">IDOR</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.xss_page') }}">XSS</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.idor_page') }}">IDOR</a>
+                        <a class="collapse-item" href="#">Brocken access control</a>
+                        <a class="collapse-item" href="#">Brocken authentication</a>
                         <a class="collapse-item" href="#">Path Traversal </a>
-                        <a class="collapse-item" href="#">Broken Authentication</a>
                         <a class="collapse-item" href="#">CSRF</a>
                         <a class="collapse-item" href="#">File Upload</a>
                     </div>

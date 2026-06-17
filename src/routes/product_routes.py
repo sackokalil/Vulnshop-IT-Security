@@ -9,12 +9,16 @@ from src.services.product_service import (
     get_product_by_id,
     create_product,
     edit_product,
-    remove_product
+    remove_product,
+    search_products
 )
 from src.services.review_service import (
     get_reviews_by_product_id,
-    get_review_stats_by_product_id
+    get_review_stats_by_product_id,
+    get_review_stats_for_products
 )
+
+
 
 
 
@@ -38,6 +42,38 @@ def detail_product(product_id):
         reviews=reviews,
         review_stats=review_stats
     )
+
+
+
+
+
+@product_bp.route("/search")
+def search_product():
+    # VULNERABILITY: Reflected XSS
+    #
+    # The value of "query" comes directly from the URL.
+    # Example:
+    # /products/search?query=<script>alert('Reflected XSS')</script>
+    #
+    # The value is not stored in the database.
+    # It is only reflected back into the HTML response.
+    # The vulnerability becomes active if the template renders it with "|safe".
+
+    query = request.args.get("query", "").strip()
+
+    products = search_products(query)
+
+    product_stats = get_review_stats_for_products(products)
+
+    return render_template(
+        "home.html",
+        products=products,
+        product_stats=product_stats,
+        search_query=query
+    )
+
+
+
 
 
 

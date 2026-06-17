@@ -165,10 +165,26 @@
                                         {% endfor %}
                                     </div>
 
-                                    <p class="review-text">
+                                    <!-- 
+                                        VULNERABILITY: Stored XSS
+
+                                        The review comment is displayed with the "|safe" filter.
+                                        This disables Jinja2 automatic HTML escaping.
+
+                                        As a result, if an attacker stores JavaScript code inside a review,
+                                        the script will be executed whenever another user opens this product page.
+
+                                        Vulnerable payload example:
+                                        <script>alert('Stored XSS')</script>
+
+                                        Secure version:
                                         {{ review.comment }}
+                                    -->
+                                    <p class="review-text">
+                                        {{ review.comment | safe }}
                                     </p>
 
+                                    
                                 </div>
                             {% endfor %}
                         {% else %}

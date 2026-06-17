@@ -4,7 +4,8 @@ from src.models.product import (
     select_all_products,
     select_product_by_id,
     update_product,
-    delete_product_by_id
+    delete_product_by_id,
+    search_products_by_keyword
 )
 
 
@@ -47,3 +48,7 @@ def edit_product(product_id, name, description, price, category, image_url):
 def remove_product(product_id):
     create_products_table()
     delete_product_by_id(product_id)
+
+
+def search_products(keyword):
+    return search_products_by_keyword(keyword)

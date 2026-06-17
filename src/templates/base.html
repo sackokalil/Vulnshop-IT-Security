@@ -88,10 +88,30 @@
             </nav>
 
             <div class="header-actions">
-                <div class="search-box">
-                    <input type="text" placeholder="Rechercher..." id="searchInput">
-                    <i class="fas fa-search"></i>
-                </div>
+                <!--
+                    Search form used for the Reflected XSS demonstration.
+
+                    The user input is sent through the URL as a GET parameter:
+                    /products/search?query=...
+
+                    This is useful for demonstrating Reflected XSS because the payload
+                    is reflected immediately in the HTTP response and is not stored
+                    in the database.
+                -->
+                <form action="{{ url_for('product.search_product') }}#products"
+                    method="get"
+                    class="search-box">
+
+                    <input type="text"
+                        name="query"
+                        placeholder="Search..."
+                        id="searchInput">
+
+                    <button type="submit" style="border:none; background:transparent; cursor:pointer;">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                </form>
                 <a href="{{url_for('cart.cart_page')}}" class="cart-icon">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">0</span>

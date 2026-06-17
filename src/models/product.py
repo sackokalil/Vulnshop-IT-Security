@@ -87,3 +87,25 @@ def delete_product_by_id(product_id):
 
     conn.commit()
     conn.close()
+
+
+
+
+def search_products_by_keyword(keyword):
+    conn = get_db_connection()
+
+    products = conn.execute("""
+        SELECT id, name, description, price, category, image_url
+        FROM products
+        WHERE name LIKE ?
+           OR description LIKE ?
+           OR category LIKE ?
+        ORDER BY id DESC
+    """, (
+        f"%{keyword}%",
+        f"%{keyword}%",
+        f"%{keyword}%"
+    )).fetchall()
+
+    conn.close()
+    return products

@@ -1,0 +1,248 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Security Lab Dashboard
+        </h1>
+    </div>
+
+    <div class="alert alert-warning shadow-sm">
+        <strong>VulnShop Security Lab</strong> contains intentionally vulnerable features
+        used to demonstrate OWASP Top 10 attacks with automated exploit scripts.
+    </div>
+
+    <div class="row">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.sql_injection_page') }}" class="text-decoration-none">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            SQL Injection
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Union-Based & Blind SQLi
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.xss_page') }}" class="text-decoration-none">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            XSS
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Stored & Reflected XSS
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.idor_page') }}" class="text-decoration-none">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            IDOR
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Access other users' orders
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.broken_authentication_page') }}" class="text-decoration-none">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Broken Authentication
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Weak login/session logic
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.broken_access_control_page') }}" class="text-decoration-none">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Broken Access Control
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Unauthorized admin access
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.path_traversal_page') }}" class="text-decoration-none">
+                <div class="card border-left-secondary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                            Path Traversal
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Read unauthorized files
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.csrf_page') }}" class="text-decoration-none">
+                <div class="card border-left-dark shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                            CSRF
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Force user actions
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.file_upload_page') }}" class="text-decoration-none">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            File Upload
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Unsafe product image upload
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Required Vulnerabilities Checklist
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Vulnerability</th>
+                        <th>Category</th>
+                        <th>Exploit Script</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Union-Based SQL Injection</td>
+                        <td>SQL Injection</td>
+                        <td>exploits/exploit_sqli_union.py</td>
+                        <td><span class="badge badge-warning">Planned</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>2</td>
+                        <td>Blind SQL Injection</td>
+                        <td>SQL Injection</td>
+                        <td>exploits/exploit_sqli_blind.py</td>
+                        <td><span class="badge badge-warning">Planned</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>3</td>
+                        <td>Stored XSS</td>
+                        <td>XSS</td>
+                        <td>exploits/Stored_XSS_exploit.py</td>
+                        <td><span class="badge badge-success">Implemented</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>4</td>
+                        <td>Reflected XSS</td>
+                        <td>XSS</td>
+                        <td>exploits/reflected_xss_exploit.py</td>
+                        <td><span class="badge badge-success">Implemented</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>5</td>
+                        <td>Broken Authentication</td>
+                        <td>Authentication</td>
+                        <td>exploits/exploit_broken_auth.py</td>
+                        <td><span class="badge badge-warning">Planned</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>6</td>
+                        <td>IDOR</td>
+                        <td>Broken Access Control</td>
+                        <td>exploits/idor_exploit.py</td>
+                        <td><span class="badge badge-success">Implemented</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>7</td>
+                        <td>Path Traversal</td>
+                        <td>Broken Access Control</td>
+                        <td>exploits/exploit_path_traversal.py</td>
+                        <td><span class="badge badge-warning">Planned</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>8</td>
+                        <td>CSRF</td>
+                        <td>OWASP Top 10</td>
+                        <td>exploits/exploit_csrf.html</td>
+                        <td><span class="badge badge-warning">Planned</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>9</td>
+                        <td>File Upload</td>
+                        <td>OWASP Top 10</td>
+                        <td>exploits/exploit_file_upload.py</td>
+                        <td><span class="badge badge-warning">Planned</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
