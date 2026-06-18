@@ -18,9 +18,9 @@
     <div class="card shadow mb-4">
 
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-danger">
+            <h5 class="m-0 font-weight-bold text-danger">
                 1. SQL Injection - Login Authentication Bypass
-            </h6>
+            </h5>
         </div>
 
         <div class="card-body">
@@ -343,6 +343,211 @@ python sqli_ui_exploit.py
 [+] Browser is now authenticated as Admin.
 [+] Dashboard is visible for demonstration.
             </code></pre>
+
+
+
+
+
+            <hr>
+
+            <h5 class="mt-5 text-danger">
+            2. Union-Based SQL Injection - Product Search
+            </h5>
+
+            <p>
+            Union-Based SQL Injection occurs when user input is inserted directly into
+            an SQL query and allows an attacker to combine the original query with
+            another query using the SQL <code>UNION</code> operator.
+            </p>
+
+            <p>
+            In VulnShop, the product search feature intentionally contains a vulnerable
+            query that can be exploited to retrieve data from the <code>users</code>
+            table.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+
+            <pre><code>
+            GET /products/search?query=
+            </code></pre>
+
+            <h5>Affected Files</h5>
+
+            <pre><code>
+            src/routes/product_routes.py
+            src/models/product.py
+            src/services/product_service.py
+            templates/home.html
+            </code></pre>
+
+            <h5>Vulnerable Query</h5>
+
+            <pre><code>
+            query = (
+            "SELECT id, name, description, price, category, image_url "
+            "FROM products "
+            f"WHERE name LIKE '%{keyword}%' "
+            f"OR description LIKE '%{keyword}%' "
+            f"OR category LIKE '%{keyword}%' "
+            "ORDER BY id DESC"
+            )
+            </code></pre>
+
+            <p>
+            The value of <code>keyword</code> is inserted directly into the SQL query.
+            An attacker can therefore inject additional SQL statements.
+            </p>
+
+            <h5>Attack Payload</h5>
+
+            <pre><code>
+            ' UNION SELECT
+            id,
+            email,
+            password,
+            0,
+            role,
+            'uploads/products/default.jpg'
+            FROM users --
+            </code></pre>
+
+            <h5>Column Mapping</h5>
+
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Injected Value</th>
+                    <th>Displayed As</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>email</td>
+                    <td>Product Name</td>
+                </tr>
+
+                <tr>
+                    <td>password</td>
+                    <td>Product Description</td>
+                </tr>
+
+                <tr>
+                    <td>role</td>
+                    <td>Product Category</td>
+                </tr>
+
+                <tr>
+                    <td>0</td>
+                    <td>Product Price</td>
+                </tr>
+            </tbody>
+            </table>
+
+            <h5>Expected Vulnerable Result</h5>
+
+            <p>
+            Instead of returning only products, the application displays records
+            from the <code>users</code> table as fake products.
+            </p>
+
+            <p>
+            Sensitive information such as email addresses, passwords and user roles
+            becomes visible inside the product list.
+            </p>
+
+            
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <h6>Exploit File</h6>
+
+            <pre><code>
+            exploits/sqli_union_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+            cd exploits
+            python sqli_union_exploit.py
+            </code></pre>
+
+            <h6>What the Script Does</h6>
+
+            <ul>
+            <li>Opens the VulnShop website in a browser.</li>
+            <li>Automatically inserts a UNION SELECT payload into the search field.</li>
+            <li>Submits the search form.</li>
+            <li>Triggers the vulnerable SQL query.</li>
+            <li>Displays user records as fake products.</li>
+            </ul>
+
+            <h6>Requirements</h6>
+
+            <ul>
+            <li>Google Chrome must be installed.</li>
+            <li>Selenium must be installed.</li>
+            <li>ChromeDriver must match the installed Chrome version.</li>
+            </ul>
+
+            <h6>Alternative Browsers</h6>
+
+            <p>
+            If Chrome is not installed, the exploit can be adapted by replacing:
+            </p>
+
+            <pre><code>
+            driver = webdriver.Chrome()
+            </code></pre>
+
+            <p>
+            with:
+            </p>
+
+            <pre><code>
+            driver = webdriver.Edge()
+            </code></pre>
+
+            <p>or</p>
+
+            <pre><code>
+            driver = webdriver.Firefox()
+            </code></pre>
+
+            <h5>Impact</h5>
+
+            <ul>
+            <li>Disclosure of user accounts.</li>
+            <li>Disclosure of passwords stored in the database.</li>
+            <li>Disclosure of user roles.</li>
+            <li>Unauthorized access to sensitive information.</li>
+            <li>Violation of confidentiality.</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+
+            <p>
+            All database queries should use parameterized statements instead of
+            concatenating user input directly into SQL strings.
+            </p>
+
+            <pre><code>
+            products = conn.execute("""
+            SELECT id, name, description, price, category, image_url
+            FROM products
+            WHERE name LIKE ?
+            OR description LIKE ?
+            OR category LIKE ?
+            """, (
+            f"%{keyword}%",
+            f"%{keyword}%",
+            f"%{keyword}%"
+            ))
+            </code></pre>
+
+
 
         </div>
     </div>

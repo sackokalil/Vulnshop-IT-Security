@@ -94,18 +94,39 @@ def delete_product_by_id(product_id):
 def search_products_by_keyword(keyword):
     conn = get_db_connection()
 
-    products = conn.execute("""
-        SELECT id, name, description, price, category, image_url
-        FROM products
-        WHERE name LIKE ?
-           OR description LIKE ?
-           OR category LIKE ?
-        ORDER BY id DESC
-    """, (
-        f"%{keyword}%",
-        f"%{keyword}%",
-        f"%{keyword}%"
-    )).fetchall()
+    keyword_upper = keyword.upper()
+    
+    if ("UNION" in keyword_upper or "SELECT" in keyword_upper) :
+        #Query for Union Based Sql INJECTION
+        query = (
+            "SELECT id, name, description, price, category, image_url "
+            "FROM products "
+            f"WHERE name LIKE '%{keyword}%' "
+            f"OR description LIKE '%{keyword}%' "
+            f"OR category LIKE '%{keyword}%' "
+            "ORDER BY id DESC"
+        )
 
-    conn.close()
+        products = conn.execute(query).fetchall()
+
+        conn.close()
+
+
+    else:
+        #Query for refelcted xss
+        products = conn.execute("""
+            SELECT id, name, description, price, category, image_url
+            FROM products
+            WHERE name LIKE ?
+            OR description LIKE ?
+            OR category LIKE ?
+            ORDER BY id DESC
+        """, (
+            f"%{keyword}%",
+            f"%{keyword}%",
+            f"%{keyword}%"
+        )).fetchall()
+
+        conn.close()
+
     return products

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, url_for, flash, redirect, request,
 from src.services.category_service import get_all_categories
 import os
 from werkzeug.utils import secure_filename
+from src.services.security_event_service import create_security_event
 
 
 from src.services.product_service import (
@@ -17,7 +18,6 @@ from src.services.review_service import (
     get_review_stats_by_product_id,
     get_review_stats_for_products
 )
-
 
 
 
@@ -45,21 +45,55 @@ def detail_product(product_id):
 
 
 
+def contains_union_sql_payload(value):
+    if not value:
+        return False
+
+    value = value.lower()
+
+    suspicious_patterns = [
+        "union select",
+        "' union",
+        "--",
+        " from users",
+        "from"
+        "password",
+        "sqlite_master"
+    ]
+
+    for pattern in suspicious_patterns:
+        if pattern in value:
+            return True
+
+    return False
 
 
 @product_bp.route("/search")
 def search_product():
-    # VULNERABILITY: Reflected XSS
-    #
+     # This endpoint is intentionally vulnerable to:
+    # 1. Reflected XSS: search_query is rendered with |safe in home.html:
     # The value of "query" comes directly from the URL.
     # Example:
     # /products/search?query=<script>alert('Reflected XSS')</script>
-    #
     # The value is not stored in the database.
     # It is only reflected back into the HTML response.
     # The vulnerability becomes active if the template renders it with "|safe".
 
+    # 2. Union-Based SQL Injection: search query is used unsafely in product search
+    
+
     query = request.args.get("query", "").strip()
+
+    if contains_union_sql_payload(query):
+        create_security_event(
+            event_type="UNION_SQL_INJECTION_ATTEMPT",
+            severity="High",
+            description="Union-Based SQL Injection payload submitted in product search.",
+            user_id=None,
+            endpoint=request.path,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent")
+        )
 
     products = search_products(query)
 

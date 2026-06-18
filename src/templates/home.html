@@ -148,9 +148,15 @@
                             </a>
                 
                         </h3>
+                        <p class="product-description">
+                            {{ product.description[:55] }}
+                            {% if product.description|length > 55 %}
+                                ...
+                            {% endif %}
+                        </p>
 
 
-                        {% set stats = product_stats[product.id] %}
+                        {% set stats = product_stats.get(product.id, {"average_rating": 0, "review_count": 0}) %}
 
                         <div class="product-rating">
                             <div class="stars">
