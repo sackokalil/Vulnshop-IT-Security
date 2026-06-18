@@ -108,7 +108,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ url_for('admin_vulnerability.vulnerability_dashboard') }}">Dashboard</a>
-                        <a class="collapse-item" href="#">SQL Injection</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.sql_injection_page') }}">SQL Injection</a>
                         <a class="collapse-item" href="{{ url_for('admin_vulnerability.xss_page') }}">XSS</a>
                         <a class="collapse-item" href="{{ url_for('admin_vulnerability.idor_page') }}">IDOR</a>
                         <a class="collapse-item" href="#">Brocken access control</a>

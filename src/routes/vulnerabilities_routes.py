@@ -25,7 +25,7 @@ def xss_page():
 @admin_vulnerability_bp.route("/sql-injection")
 def sql_injection_page():
     return render_template(
-        "admin/security_lab/sql_injection.html"
+        "admin/security_lab/sqli.html"
     )
 
 

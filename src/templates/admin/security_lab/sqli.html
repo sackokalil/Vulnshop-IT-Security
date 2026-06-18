@@ -1,0 +1,352 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        SQL Injection
+    </h1>
+
+    <div class="alert alert-warning">
+        <strong>Security Lab:</strong>
+        This page documents an intentionally implemented SQL Injection vulnerability in VulnShop
+        for educational and demonstration purposes.
+    </div>
+
+    <!-- SQL Injection Section -->
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                1. SQL Injection - Login Authentication Bypass
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Description</h5>
+            <p>
+                SQL Injection occurs when user input is inserted directly into a SQL query
+                without proper parameterization. An attacker can inject SQL code and change
+                the meaning of the original query.
+            </p>
+
+            <p>
+                In this vulnerability, the login form is intentionally vulnerable.
+                By injecting SQL into the email field, an attacker can bypass authentication
+                and log in as an existing user, for example an administrator.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+            <pre><code>POST /login</code></pre>
+
+            <h5>Affected Route</h5>
+            <pre><code>src/routes/auth_routes.py</code></pre>
+
+            <h5>Affected Service</h5>
+            <pre><code>src/services/auth_service.py</code></pre>
+
+            <h5>Affected Template</h5>
+            <pre><code>templates/auth/login.html</code></pre>
+
+            <h5>Vulnerable Code</h5>
+
+            <pre><code>
+def authenticate_user(email, password):
+
+    conn = get_db_connection()
+
+    query = (
+        "SELECT id, first_name, last_name, username, email, password, role, status, created_at "
+        "FROM users "
+        f"WHERE email = '{email}' AND password = '{password}'"
+    )
+
+    user = conn.execute(query).fetchone()
+
+    conn.close()
+
+    return user
+            </code></pre>
+
+            <p>
+                The vulnerability is caused by the direct insertion of <code>email</code>
+                and <code>password</code> into the SQL query using an f-string.
+                The database receives the injected SQL as part of the query.
+            </p>
+
+            <h5>Example Payload</h5>
+
+            <pre><code>' OR role='Admin' AND status='Active' -- </code></pre>
+
+            <p>
+                The password can contain any value because the SQL comment operator
+                <code>--</code> comments out the remaining password check.
+            </p>
+
+            <h5>Generated SQL Query</h5>
+
+            <pre><code>
+SELECT id, first_name, last_name, username, email, password, role, status, created_at
+FROM users
+WHERE email = '' OR role='Admin' AND status='Active' -- ' AND password = 'anything'
+            </code></pre>
+
+            <p>
+                Because the injected condition searches for an active administrator,
+                the database returns an admin user. Flask then creates a real session
+                for that user.
+            </p>
+
+            <h5>Manual Exploitation Scenario</h5>
+
+            <pre><code>
+1. Open the login page:
+
+   /login
+
+2. Enter the following payload in the email field:
+
+   ' OR role='Admin' AND status='Active' -- 
+
+3. Enter any password, for example:
+
+   anything
+
+4. Submit the login form.
+            </code></pre>
+
+            <h5>Expected Vulnerable Result</h5>
+
+            <p>
+                If the application is vulnerable, the attacker is redirected to the
+                admin dashboard because the SQL query returns an active administrator.
+            </p>
+
+            <pre><code>
+/admin/dashboard
+            </code></pre>
+
+            <p>
+                This confirms that the attacker bypassed authentication and obtained
+                a valid Flask session as an admin user.
+            </p>
+
+            
+
+            <h5>Impact</h5>
+
+            <ul>
+                <li>Authentication bypass</li>
+                <li>Unauthorized login as another user</li>
+                <li>Privilege escalation if the returned user is an administrator</li>
+                <li>Creation of a valid server-side session for the attacker</li>
+                <li>Unauthorized access to the admin dashboard</li>
+                <li>Possible exposure or manipulation of sensitive data</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+
+            <p>
+                User input must never be inserted directly into SQL queries.
+                The secure solution is to use parameterized queries.
+            </p>
+
+            <pre><code>
+def authenticate_user(email, password):
+
+    conn = get_db_connection()
+
+    query = """
+        SELECT id, first_name, last_name, username, email, password, role, status, created_at
+        FROM users
+        WHERE email = ?
+        AND password = ?
+    """
+
+    user = conn.execute(query, (email, password)).fetchone()
+
+    conn.close()
+
+    return user
+            </code></pre>
+
+            <p>
+                With parameterized queries, the database treats user input as data,
+                not as executable SQL code.
+            </p>
+
+            <p>
+                In a real production system, passwords should also be hashed and verified
+                using a secure password hashing function instead of being stored in plain text.
+            </p>
+
+            <h5>Files Involved</h5>
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>src/services/auth_service.py</td>
+                        <td>Contains the intentionally vulnerable SQL query used during login.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/routes/auth_routes.py</td>
+                        <td>Receives login input, creates the Flask session, and logs SQL Injection attempts.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/auth/login.html</td>
+                        <td>Contains the login form where the SQL Injection payload is entered.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/user.py</td>
+                        <td>Defines the users table containing email, password, role, and status.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/session.py</td>
+                        <td>Stores the session created after the SQL Injection bypass.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/security_event.py</td>
+                        <td>Stores the detected SQL Injection attempt.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/services/security_event_service.py</td>
+                        <td>Creates and retrieves security events for the dashboard.</td>
+                    </tr>
+
+                    <tr>
+                        <td>exploits/sqli_exploit.py</td>
+                        <td>Automated HTTP exploit using Python requests.</td>
+                    </tr>
+
+                    <tr>
+                        <td>exploits/sqli_ui_exploit.py</td>
+                        <td>Browser-based exploit using Selenium to demonstrate the attack visually.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/security_lab/sqli.html</td>
+                        <td>This file. It documents the SQL Injection vulnerability and its mitigation.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <p>
+                The SQL Injection can be exploited automatically using a Python script.
+                This script sends the payload directly to the vulnerable login endpoint.
+            </p>
+
+            <h6>Exploit File</h6>
+
+            <pre><code>
+exploits/sqli_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+cd exploits
+python sqli_exploit.py
+            </code></pre>
+
+            <h6>What the Script Does</h6>
+
+            <ul>
+                <li>Sends a POST request to the vulnerable login endpoint.</li>
+                <li>Injects the SQL Injection payload into the email field.</li>
+                <li>Bypasses the password check.</li>
+                <li>Checks whether the application redirects to the admin dashboard.</li>
+                <li>Confirms the authentication bypass if the redirect target is <code>/admin/dashboard</code>.</li>
+            </ul>
+
+            <h6>Example Configuration</h6>
+
+            <pre><code>
+payload_email = "' OR role='Admin' AND status='Active' -- "
+payload_password = "anything"
+            </code></pre>
+
+            <h6>Expected Result</h6>
+
+            <pre><code>
+[+] SQL Injection successful.
+[+] The attacker is logged in as an Admin user.
+[+] Authentication bypass confirmed.
+            </code></pre>
+
+            <h5>Browser-Based UI Exploit Demonstration</h5>
+
+            <p>
+                For a visual demonstration, a second script uses Selenium to open the real
+                login page in a browser, enter the SQL Injection payload, submit the form,
+                and display the authenticated admin dashboard.
+            </p>
+
+            <h6>UI Exploit File</h6>
+
+            <pre><code>
+exploits/sqli_ui_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+cd exploits
+python sqli_ui_exploit.py
+            </code></pre>
+
+            <h6>What the UI Script Does</h6>
+
+            <ul>
+                <li>Opens the VulnShop login page in a browser.</li>
+                <li>Types the SQL Injection payload into the email field.</li>
+                <li>Types any password into the password field.</li>
+                <li>Clicks the login button.</li>
+                <li>Shows the admin dashboard if the bypass is successful.</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <strong>Important:</strong>
+                The browser-based exploit currently uses <code>webdriver.Chrome()</code>.
+                Therefore, Google Chrome must be installed on the machine running the script.
+                If Chrome is not installed, the line
+                <code>driver = webdriver.Chrome()</code>
+                should be changed to another available browser driver, for example
+                <code>webdriver.Edge()</code> or <code>webdriver.Firefox()</code>.
+            </div>
+
+            <h6>Expected UI Result</h6>
+
+            <p>
+                The browser opens automatically, the payload is inserted into the login form,
+                and the attacker is redirected to the admin dashboard.
+            </p>
+
+            <pre><code>
+[+] SQL Injection successful.
+[+] Browser is now authenticated as Admin.
+[+] Dashboard is visible for demonstration.
+            </code></pre>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

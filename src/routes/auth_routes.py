@@ -4,6 +4,52 @@ from src.services.auth_service import authenticate_user
 from src.services.auth_service import authenticate_user, logout_user
 import uuid
 from src.services.session_service import create_session, end_session
+from src.services.security_event_service import create_security_event
+
+
+
+def contains_sql_injection_payload(value):
+    """
+    Simple SQL Injection detection helper for the security lab.
+
+    This function checks whether a submitted login value contains
+    common SQL Injection patterns.
+
+    Important:
+    This is not a complete real-world SQL Injection protection.
+    It is only used here to detect suspicious payloads and create
+    a security event for the VulnShop dashboard.
+    """
+
+    if not value:
+        return False
+
+    value = value.lower()
+
+    suspicious_patterns = [
+        "' or ",
+        '" or ',
+        " or 1=1",
+        "'--",
+        "--",
+        "#",
+        "/*",
+        "*/",
+        "union select",
+        "drop table",
+        "insert into",
+        "delete from",
+        "update users",
+        "select ",
+        "1=1"
+    ]
+
+    for pattern in suspicious_patterns:
+        if pattern in value:
+            return True
+
+    return False
+
 
 
 login_bp = Blueprint('login', __name__)
@@ -30,6 +76,9 @@ def login_page():
         if not password:
             flash("Password is required.", "danger")
             return redirect(url_for("login.login_page"))
+        
+
+        
 
         user = authenticate_user(email, password)
 
@@ -55,8 +104,18 @@ def login_page():
             ip_address=request.remote_addr,
             user_agent=request.headers.get("User-Agent")
         )
-
-        #flash("Login successful.", "success")
+        
+        if contains_sql_injection_payload(email) or contains_sql_injection_payload(password):
+            create_security_event(
+                event_type="SQL_INJECTION_ATTEMPT",
+                severity="High",
+                description="SQL Injection payload submitted on login form.",
+                user_id=None,
+                endpoint=request.path,
+                ip_address=request.remote_addr,
+                user_agent=request.headers.get("User-Agent")
+            )
+            
 
         if user["role"] == "Admin":
             return redirect(url_for("admin.dashboard"))

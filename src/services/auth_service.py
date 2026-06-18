@@ -1,18 +1,38 @@
-from src.services.user_service import get_user_by_email
 from flask import session
+from src.database.db import get_db_connection
 
 
 def authenticate_user(email, password):
-    user = get_user_by_email(email)
+    """
+    VULNERABLE LOGIN FUNCTION - SQL Injection Lab
 
-    if not user:
-        return None
+    This function is intentionally vulnerable.
+    User input is directly inserted into the SQL query.
+    """
 
-    if user["password"] != password:
-        return None
+    conn = get_db_connection()
+
+    query = (
+        "SELECT id, first_name, last_name, username, email, password, role, status, created_at "
+        "FROM users "
+        f"WHERE email = '{email}' AND password = '{password}'"
+    )
+    #result : SELECT ... FROM users WHERE email = '' OR role='Admin' AND status='Active' -- ' AND password = 'anything'
+
+    print("SQL QUERY:")
+    print(query)
+
+    user = conn.execute(query).fetchone()
+
+    if user:
+        print("USER FOUND:")
+        print(dict(user))
+    else:
+        print("NO USER FOUND")
+
+    conn.close()
 
     return user
-
 
 
 def logout_user():
