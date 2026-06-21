@@ -1646,6 +1646,21 @@ img {
 }
 
 
+/*========================================
+ BTN .btn-secondary
+ =======================================*/
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+
+
 /* ========================================
    FOOTER
 ======================================== */

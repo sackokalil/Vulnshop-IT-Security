@@ -11,6 +11,15 @@ from src.services.order_service import (
     remove_order
 )
 from src.services.security_event_service import create_security_event
+from flask import send_file
+import os
+
+from io import BytesIO
+from flask import send_file
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.units import cm
 
 
 order_bp = Blueprint(
@@ -89,6 +98,105 @@ def order_detail(order_id):
         order=order,
         items=items
     )
+
+
+
+
+@order_bp.route("/<int:order_id>/invoice")
+def download_invoice(order_id):
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login.login_page"))
+
+    order, items = get_order_details(order_id)
+
+    if not order:
+        flash("Order not found.", "danger")
+        return redirect(url_for("order.my_orders"))
+
+    if order["user_id"] != session["user_id"]:
+        flash("Access denied.", "danger")
+        return redirect(url_for("order.my_orders"))
+
+    pdf_buffer = BytesIO()
+
+    pdf = canvas.Canvas(pdf_buffer, pagesize=A4)
+    width, height = A4
+
+    y = height - 2 * cm
+
+    pdf.setFont("Helvetica-Bold", 22)
+    pdf.drawString(2 * cm, y, "VulnShop Invoice")
+
+    y -= 1.2 * cm
+
+    pdf.setFont("Helvetica", 11)
+    pdf.drawString(2 * cm, y, f"Invoice Number: INV-{order['id']}")
+    y -= 0.6 * cm
+    pdf.drawString(2 * cm, y, f"Order ID: {order['id']}")
+    y -= 0.6 * cm
+    pdf.drawString(2 * cm, y, f"Order Date: {order['created_at']}")
+    y -= 0.6 * cm
+    pdf.drawString(2 * cm, y, f"Customer: {order['username']}")
+    y -= 0.6 * cm
+    pdf.drawString(2 * cm, y, f"Email: {order['email']}")
+    y -= 1.2 * cm
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(2 * cm, y, "Product")
+    pdf.drawString(9 * cm, y, "Price")
+    pdf.drawString(12 * cm, y, "Qty")
+    pdf.drawString(14 * cm, y, "Total")
+
+    y -= 0.3 * cm
+    pdf.setStrokeColor(colors.grey)
+    pdf.line(2 * cm, y, 19 * cm, y)
+    y -= 0.7 * cm
+
+    pdf.setFont("Helvetica", 10)
+
+    for item in items:
+        if y < 3 * cm:
+            pdf.showPage()
+            y = height - 2 * cm
+            pdf.setFont("Helvetica", 10)
+
+        product_name = item["product_name"]
+        if len(product_name) > 35:
+            product_name = product_name[:35] + "..."
+
+        pdf.drawString(2 * cm, y, product_name)
+        pdf.drawString(9 * cm, y, f"{item['price']} EUR")
+        pdf.drawString(12 * cm, y, str(item["quantity"]))
+        pdf.drawString(14 * cm, y, f"{item['total_price']} EUR")
+
+        y -= 0.7 * cm
+
+    y -= 0.5 * cm
+    pdf.line(2 * cm, y, 19 * cm, y)
+    y -= 0.8 * cm
+
+    pdf.setFont("Helvetica-Bold", 13)
+    pdf.drawString(12 * cm, y, "Total:")
+    pdf.drawString(14 * cm, y, f"{order['total_price']} EUR")
+
+    y -= 1.5 * cm
+
+    pdf.setFont("Helvetica", 9)
+    pdf.drawString(2 * cm, y, "Thank you for shopping with VulnShop.")
+
+    pdf.save()
+
+    pdf_buffer.seek(0)
+
+    return send_file(
+        pdf_buffer,
+        as_attachment=True,
+        download_name=f"invoice_{order['id']}.pdf",
+        mimetype="application/pdf"
+    )
+
+
 
 
 # ======================== Admin part =============================
