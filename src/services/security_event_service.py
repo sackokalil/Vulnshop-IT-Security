@@ -1,9 +1,9 @@
 from src.models.security_event import (
     create_security_events_table,
     insert_security_event,
-    select_recent_security_events
+    select_recent_security_events,
+    count_security_events_by_type
 )
-
 
 def create_security_event(event_type, severity, description, user_id=None, endpoint=None, ip_address=None, user_agent=None):
     create_security_events_table()
@@ -22,3 +22,8 @@ def create_security_event(event_type, severity, description, user_id=None, endpo
 def get_recent_security_events(limit=10):
     create_security_events_table()
     return select_recent_security_events(limit)
+
+
+def get_security_event_stats():
+    create_security_events_table()
+    return count_security_events_by_type()

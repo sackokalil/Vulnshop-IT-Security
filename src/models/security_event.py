@@ -75,3 +75,18 @@ def select_recent_security_events(limit=10):
 
     conn.close()
     return events
+
+
+
+def count_security_events_by_type():
+    conn = get_db_connection()
+
+    rows = conn.execute("""
+        SELECT event_type, COUNT(*) AS total
+        FROM security_events
+        GROUP BY event_type
+        ORDER BY total DESC
+    """).fetchall()
+
+    conn.close()
+    return rows

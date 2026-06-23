@@ -110,13 +110,12 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ url_for('admin_vulnerability.vulnerability_dashboard') }}">Dashboard</a>
                         <a class="collapse-item" href="{{ url_for('admin_vulnerability.sql_injection_page') }}">SQL Injection</a>
-                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.xss_page') }}">XSS</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.xss_page') }}">Reflected & Stored XSS</a>
                         <a class="collapse-item" href="{{ url_for('admin_vulnerability.idor_page') }}">IDOR</a>
-                        <a class="collapse-item" href="#">Brocken access control</a>
-                        <a class="collapse-item" href="#">Brocken authentication</a>
-                        <a class="collapse-item" href="#">Path Traversal </a>
-                        <a class="collapse-item" href="#">CSRF</a>
-                        <a class="collapse-item" href="#">File Upload</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.broken_authentication_page') }}">Brocken authentication</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.path_traversal_page') }}">Path Traversal </a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.csrf_page') }}">CSRF</a>
+                        <a class="collapse-item" href="{{ url_for('admin_vulnerability.file_upload_page') }}">File Upload</a>
                     </div>
                 </div>
             </li>

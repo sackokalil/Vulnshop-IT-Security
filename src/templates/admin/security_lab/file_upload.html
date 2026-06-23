@@ -1,0 +1,337 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        Unrestricted File Upload
+    </h1>
+
+    <div class="alert alert-warning">
+        <strong>Security Lab:</strong>
+        This page documents an intentionally implemented unrestricted file upload vulnerability
+        in VulnShop for educational and demonstration purposes.
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                1. File Upload - Malicious Profile Picture Upload
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Description</h5>
+            <p>
+                Unrestricted File Upload occurs when an application allows users to upload files
+                without properly validating the file extension, MIME type, file content, or storage location.
+            </p>
+
+            <p>
+                In this vulnerability, a normal user can upload a profile picture, but the application
+                does not verify whether the uploaded file is really an image.
+            </p>
+
+            <p>
+                As a result, a user can upload a malicious HTML file instead of an image. The file is stored
+                inside the public static upload folder and can later be accessed directly through the browser.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+            <pre><code>POST /profile/upload-picture</code></pre>
+
+            <h5>Public Uploaded File Location</h5>
+            <pre><code>GET /static/uploads/profiles/&lt;filename&gt;</code></pre>
+
+            <h5>Affected Route</h5>
+            <pre><code>src/routes/profile_route.py</code></pre>
+
+            <h5>Affected Template</h5>
+            <pre><code>templates/shop/profile.html</code></pre>
+
+            <h5>Affected Model / Service</h5>
+            <pre><code>
+src/models/user.py
+src/services/profile_service.py
+            </code></pre>
+
+            <h5>Vulnerable Code</h5>
+            <pre><code>
+def save_profile_picture(image_file):
+    if not image_file or image_file.filename == "":
+        return None
+
+    # VULNERABILITY:
+    # The uploaded file is saved without validating:
+    # - file extension
+    # - MIME type
+    # - real file content
+    # - dangerous file names
+    #
+    # This allows non-image files such as .html, .js, .svg,
+    # .bat, .php, or .exe to be uploaded.
+
+    filename = secure_filename(image_file.filename)
+
+    upload_folder = os.path.join(
+        current_app.root_path,
+        "static",
+        "uploads",
+        "profiles"
+    )
+
+    os.makedirs(upload_folder, exist_ok=True)
+
+    file_path = os.path.join(upload_folder, filename)
+    image_file.save(file_path)
+
+    return f"uploads/profiles/{filename}"
+            </code></pre>
+
+            <p>
+                The application stores the uploaded file inside a public static directory.
+                Because the file is publicly reachable, the browser can open and render it directly.
+            </p>
+
+            <h5>Manual Exploitation Scenario</h5>
+
+            <pre><code>
+1. Login as a normal user.
+
+2. Open the profile page:
+
+   /profile/
+
+3. Upload a file named:
+
+   malicious_upload.html (for exemple the file exploits/malicious_upload.html)
+
+4. The application saves the uploaded file in:
+
+   static/uploads/profiles/malicious_upload.html
+
+5. Open the uploaded file directly in the browser:
+
+   http://127.0.0.1:5000/static/uploads/profiles/malicious_upload.html
+
+6. The uploaded HTML file is rendered by the browser.
+            </code></pre>
+
+            <h5>Example Malicious File</h5>
+
+            <pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Malicious Upload&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Unrestricted File Upload Exploited&lt;/h1&gt;
+
+    &lt;p&gt;
+        This HTML file was uploaded through the profile picture upload feature.
+    &lt;/p&gt;
+
+    &lt;script&gt;
+        alert("Unrestricted File Upload executed!");
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </code></pre>
+
+            <h5>Expected Vulnerable Result</h5>
+            <p>
+                If the uploaded file can be opened through
+                <code>/static/uploads/profiles/malicious_upload.html</code> and the browser executes
+                its HTML or JavaScript content, the unrestricted file upload vulnerability is confirmed.
+            </p>
+
+            <h5>Impact</h5>
+            <ul>
+                <li>Upload of non-image files through a profile picture feature</li>
+                <li>Public hosting of malicious files</li>
+                <li>Stored XSS through uploaded HTML or SVG files</li>
+                <li>Malware or phishing file hosting</li>
+                <li>Abuse of server storage</li>
+                <li>Loss of control over uploaded user content</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+            <p>
+                The application must strictly validate uploaded files before storing them and must avoid
+                serving untrusted uploaded files as executable or renderable content.
+            </p>
+
+            <pre><code>
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+ALLOWED_MIME_TYPES = {"image/png", "image/jpeg", "image/webp"}
+
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+def save_profile_picture_secure(image_file):
+    if not image_file or image_file.filename == "":
+        return None
+
+    filename = secure_filename(image_file.filename)
+
+    # SECURITY FIX:
+    # Check file extension.
+    if not allowed_file(filename):
+        abort(400)
+
+    # SECURITY FIX:
+    # Check MIME type.
+    if image_file.mimetype not in ALLOWED_MIME_TYPES:
+        abort(400)
+
+    # SECURITY FIX:
+    # Generate a new server-side filename.
+    extension = filename.rsplit(".", 1)[1].lower()
+    safe_filename = f"{uuid.uuid4()}.{extension}"
+
+    upload_folder = os.path.join(
+        current_app.root_path,
+        "static",
+        "uploads",
+        "profiles"
+    )
+
+    os.makedirs(upload_folder, exist_ok=True)
+
+    file_path = os.path.join(upload_folder, safe_filename)
+    image_file.save(file_path)
+
+    return f"uploads/profiles/{safe_filename}"
+            </code></pre>
+
+            <h5>Additional Security Recommendations</h5>
+
+            <ul>
+                <li>Validate both file extension and MIME type.</li>
+                <li>Verify the real file content using image processing libraries.</li>
+                <li>Rename uploaded files with random server-generated names.</li>
+                <li>Store uploads outside publicly executable directories when possible.</li>
+                <li>Disable execution of scripts in upload directories.</li>
+                <li>Limit file size.</li>
+                <li>Serve uploaded files with safe headers such as <code>Content-Disposition: attachment</code>.</li>
+            </ul>
+
+            <h5>Files Involved</h5>
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>src/routes/profile_route.py</td>
+                        <td>Receives the uploaded profile file and saves it without strict validation.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/shop/profile.html</td>
+                        <td>Contains the profile picture upload form.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/services/profile_service.py</td>
+                        <td>Retrieves the user profile and updates the stored profile image path.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/user.py</td>
+                        <td>Stores the uploaded profile image path in the <code>users</code> table.</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>exploits/upload_exploit.py</td>
+                        <td>Automates login, malicious file creation, file upload, and opening the uploaded file.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/security_lab/file_upload.html</td>
+                        <td>This file. It documents the file upload vulnerability and its mitigation.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <p>
+                Instead of uploading the malicious file manually through the profile page,
+                the vulnerability can also be demonstrated automatically using a Selenium script.
+            </p>
+
+            <h6>Exploit File</h6>
+
+            <pre><code>
+exploits/upload_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+cd exploits
+python upload_exploit.py
+            </code></pre>
+
+            <h6>What the Script Does</h6>
+
+            <ul>
+                <li>Starts a browser using Selenium.</li>
+                <li>Logs in as a normal user.</li>
+                <li>Creates a malicious HTML file locally.</li>
+                <li>Uploads the file through the profile picture upload form.</li>
+                <li>Opens the uploaded file from the public static directory.</li>
+                <li>Confirms that the uploaded HTML file is accessible and executable.</li>
+            </ul>
+
+            <h6>Target Endpoint</h6>
+
+            <pre><code>
+POST /profile/upload-picture
+            </code></pre>
+
+            <h6>Example Configuration</h6>
+
+            <pre><code>
+USER_EMAIL = "mous@gmail.com"
+USER_PASSWORD = "sacko"
+
+MALICIOUS_FILENAME = "malicious_upload.html"
+            </code></pre>
+
+            <h6>Expected Result</h6>
+
+            <p>
+                After running the exploit script, the malicious file is uploaded to:
+            </p>
+
+            <pre><code>
+http://127.0.0.1:5000/static/uploads/profiles/malicious_upload.html
+            </code></pre>
+
+            <p>
+                If the browser opens the uploaded HTML file and displays the JavaScript alert,
+                the file upload vulnerability is successfully exploited.
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

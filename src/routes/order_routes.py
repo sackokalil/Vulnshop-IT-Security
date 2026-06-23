@@ -42,6 +42,8 @@ def my_orders():
         orders=orders
     )
 
+#---------------------------------------------------
+
 
 @order_bp.route("/create", methods=["POST"])
 def create_order():
@@ -61,7 +63,7 @@ def create_order():
 
 
 
-#---Vulnerable route---------
+#---Vulnerable route---------------------------------
 @order_bp.route("/<int:order_id>")
 def order_detail(order_id):
 
@@ -72,7 +74,7 @@ def order_detail(order_id):
 
     # The order_id is taken from the URL.
     # Example: /orders/1
-    # A malicious user can change it manually to /orders/2.
+    # A malicious user can change it manually to /orders/18.
     order, items = get_order_details(order_id)
 
     # If the order does not exist, stop the request.
@@ -100,7 +102,7 @@ def order_detail(order_id):
     )
 
 
-
+#------------------------------------
 
 @order_bp.route("/<int:order_id>/invoice")
 def download_invoice(order_id):
@@ -270,6 +272,7 @@ def add_order_form():
         products=products
     )
 
+#----------------------------------
 
 @admin_order_bp.route("/")
 def order_list():
@@ -280,6 +283,7 @@ def order_list():
         orders=orders
     )
 
+#---------------------------------------------
 
 @admin_order_bp.route("/<int:order_id>")
 def admin_order_detail(order_id):
@@ -291,17 +295,34 @@ def admin_order_detail(order_id):
         items=items
     )
 
+#----------------------------------------------
 
 @admin_order_bp.route("/<int:order_id>/status", methods=["POST"])
 def update_status(order_id):
+
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login.login_page"))
+
+    if session.get("role") != "Admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("home.home_page"))
+
     status = request.form.get("status")
 
     change_order_status(order_id, status)
 
     flash("Order status updated successfully.", "success")
 
-    return redirect(url_for("admin_order.admin_order_detail", order_id=order_id))
+    return redirect(
+        url_for(
+            "admin_order.admin_order_detail",
+            order_id=order_id
+        )
+    )
 
+
+#---------------------------------------------------------
 
 @admin_order_bp.route("/<int:order_id>/delete")
 def delete_order(order_id):

@@ -15,11 +15,30 @@ def create_users_table():
             password TEXT NOT NULL,
             role TEXT DEFAULT 'User',
             status TEXT DEFAULT 'Active',
+            profile_image TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
     conn.commit()
+    conn.close()
+
+
+#This funktion is because we already had users in the database and we needed to add 
+# profile_image column
+def add_profile_image_column():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN profile_image TEXT
+        """)
+        conn.commit()
+    except:
+        pass
+
     conn.close()
 
 
@@ -95,7 +114,7 @@ def select_user_by_id(user_id):
     conn = get_db_connection()
 
     user = conn.execute("""
-        SELECT id, first_name, last_name, username, email, role, status, created_at
+        SELECT id, first_name, last_name, username, email, role, status, profile_image, created_at
         FROM users
         WHERE id = ?
     """, (user_id,)).fetchone()
@@ -153,6 +172,21 @@ def delete_user_by_id(user_id):
         DELETE FROM users
         WHERE id = ?
     """, (user_id,))
+
+    conn.commit()
+    conn.close()
+
+
+
+def update_user_profile_image(user_id, profile_image):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE users
+        SET profile_image = ?
+        WHERE id = ?
+    """, (profile_image, user_id))
 
     conn.commit()
     conn.close()

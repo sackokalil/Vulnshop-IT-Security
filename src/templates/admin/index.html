@@ -152,29 +152,7 @@
                         <canvas id="myPieChart"></canvas>
                     </div>
 
-                    <div class="mt-4 text-center small">
-
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-danger"></i> SQL Injection
-                        </span>
-
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-warning"></i> XSS
-                        </span>
-
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-success"></i> Broken Access Control
-                        </span>
-
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-info"></i> Path Traversal
-                        </span>
-
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-secondary"></i> Broken Authentication
-                        </span>
-
-                    </div>
+                    <div class="mt-4 text-center small" id="pieChartLegend"></div>
                     
                 </div>
             </div>
@@ -303,5 +281,11 @@
 
 {% block dashboard_scripts %}
 <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+
+<script>
+    window.securityChartLabels = {{ stats.security_chart_labels | tojson }};
+    window.securityChartValues = {{ stats.security_chart_values | tojson }};
+</script>
+
 <script src="{{ url_for('static', filename='js/security-dashboard-chart.js') }}"></script>
 {% endblock %}

@@ -43,7 +43,7 @@ def detail_product(product_id):
         review_stats=review_stats
     )
 
-
+#---------------------------------------------------
 
 def contains_union_sql_payload(value):
     if not value:
@@ -149,7 +149,7 @@ def save_product_image(image_file):
 
 
 
-#-----------------------------------Admin part----------------------------------------------
+#===================================Admin part=======================================
 
 admin_product_bp = Blueprint("admin_product", __name__, url_prefix="/admin/products")
 
@@ -163,7 +163,7 @@ def admin_product_list():
         products=products
     )
     
-
+#--------------------------------------------------------
 
 @admin_product_bp.route("/add_product", methods=["GET", "POST"])
 def add_product_form():
@@ -194,7 +194,7 @@ def add_product_form():
         categories=categories
     )
 
-
+#-------------------------------------------------------------
 
 @admin_product_bp.route("/<int:product_id>/edit", methods=["GET", "POST"])
 def edit_product_form(product_id):
@@ -231,6 +231,7 @@ def edit_product_form(product_id):
         categories=categories
     )
 
+#-----------------------------------------------------------------
 
 @admin_product_bp.route("/<int:product_id>/delete")
 def delete_product(product_id):
