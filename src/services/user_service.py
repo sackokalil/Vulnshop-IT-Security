@@ -1,3 +1,5 @@
+from src.database.db import get_db_connection
+
 from src.models.user import (
     create_users_table,
     insert_user,
@@ -80,3 +82,18 @@ def update_user_status(user_id, status):
 def delete_user(user_id):
     create_users_table()
     delete_user_by_id(user_id)
+
+
+
+
+def update_password_by_email(email, password):
+    conn = get_db_connection()
+
+    conn.execute("""
+        UPDATE users
+        SET password = ?
+        WHERE email = ?
+    """, (password, email))
+
+    conn.commit()
+    conn.close()

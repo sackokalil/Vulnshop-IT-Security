@@ -38,7 +38,7 @@ def idor_page():
 @admin_vulnerability_bp.route("/broken-authentication")
 def broken_authentication_page():
     return render_template(
-        "admin/security_lab/broken_authentication.html"
+        "admin/security_lab/broken_auth.html"
     )
 
 

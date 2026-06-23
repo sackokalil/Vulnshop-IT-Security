@@ -2,7 +2,7 @@ from flask import Flask
 from src.routes.landing_pages_routes import  home_bp, contact_bp
 from src.routes.dashboard_routes import admin_dash_bp
 from src.routes.product_routes import product_bp, admin_product_bp
-from src.routes.auth_routes import login_bp, register_bp, logout_bp
+from src.routes.auth_routes import login_bp, register_bp, logout_bp, forgot_password_bp
 from src.routes.order_routes import admin_order_bp, order_bp
 from src.routes.profile_route import profile_bp
 from src.routes.category_route import admin_category_bp
@@ -30,6 +30,7 @@ def create_app():
     app.register_blueprint(login_bp)
     app.register_blueprint(logout_bp)
     app.register_blueprint(register_bp)
+    app.register_blueprint(forgot_password_bp)
 
     app.register_blueprint(admin_product_bp)
     app.register_blueprint(admin_category_bp)

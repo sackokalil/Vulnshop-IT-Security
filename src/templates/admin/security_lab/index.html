@@ -12,7 +12,7 @@
 
     <div class="alert alert-warning shadow-sm">
         <strong>VulnShop Security Lab</strong> contains intentionally vulnerable features
-        used to demonstrate OWASP Top 10 attacks with automated exploit scripts.
+        used to demonstrate  8 attacks with automated exploit scripts.
     </div>
 
     <div class="row">
@@ -25,7 +25,7 @@
                             SQL Injection
                         </div>
                         <div class="h6 mb-0 text-gray-800">
-                            Union-Based & Blind SQLi
+                            Union-Based SQLi & SQLi(Login Authentication Bypass)
                         </div>
                     </div>
                 </div>
@@ -81,20 +81,6 @@
 
     <div class="row">
 
-        <div class="col-xl-3 col-md-6 mb-4">
-            <a href="{{ url_for('admin_vulnerability.broken_access_control_page') }}" class="text-decoration-none">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Broken Access Control
-                        </div>
-                        <div class="h6 mb-0 text-gray-800">
-                            Unauthorized admin access
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
             <a href="{{ url_for('admin_vulnerability.path_traversal_page') }}" class="text-decoration-none">
@@ -169,7 +155,7 @@
                         <td>1</td>
                         <td>Union-Based SQL Injection</td>
                         <td>SQL Injection</td>
-                        <td>exploits/exploit_sqli_union.py</td>
+                        <td>exploits/sqli_union_exploit.py</td>
                         <td><span class="badge badge-success">Implemented</span></td>
                     </tr>
 
@@ -201,8 +187,8 @@
                         <td>5</td>
                         <td>Broken Authentication</td>
                         <td>Authentication</td>
-                        <td>exploits/exploit_broken_auth.py</td>
-                        <td><span class="badge badge-warning">Planned</span></td>
+                        <td>exploits/broken_auth_exploit.py</td>
+                        <td><span class="badge badge-success">Implemented</span></td>
                     </tr>
 
                     <tr>
@@ -217,8 +203,8 @@
                         <td>7</td>
                         <td>Path Traversal</td>
                         <td>Broken Access Control</td>
-                        <td>exploits/exploit_path_traversal.py</td>
-                        <td><span class="badge badge-warning">Planned</span></td>
+                        <td>exploits/path_traversal_exploit.py</td>
+                        <td><span class="badge badge-success">Implemented</span></td>
                     </tr>
 
                     <tr>

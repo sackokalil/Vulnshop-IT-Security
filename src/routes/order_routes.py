@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session, flash, request
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request, current_app
 from src.services.user_service import get_all_users
 from src.services.product_service import get_all_products
 from src.services.order_service import (
@@ -107,6 +107,36 @@ def download_invoice(order_id):
     if "user_id" not in session:
         flash("Please login first.", "warning")
         return redirect(url_for("login.login_page"))
+
+    requested_file = request.args.get("file")
+
+    if requested_file:
+        project_root = os.path.abspath(
+            os.path.join(current_app.root_path, "..")
+        )
+
+        invoice_folder = os.path.join(
+            project_root,
+            "files",
+            "invoices"
+        )
+
+        # VULNERABILITY: Path Traversal
+        # Example:
+        # /orders/1/invoice?file=../../secret.txt
+        file_path = os.path.join(invoice_folder, requested_file)
+
+        create_security_event(
+            event_type="PATH_TRAVERSAL_ATTEMPT",
+            severity="High",
+            description=f"User {session['user_id']} requested file: {requested_file}",
+            user_id=session["user_id"],
+            endpoint=request.full_path,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent")
+        )
+
+        return send_file(file_path, as_attachment=True)
 
     order, items = get_order_details(order_id)
 

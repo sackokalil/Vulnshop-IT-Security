@@ -1,0 +1,219 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        Path Traversal
+    </h1>
+
+    <div class="alert alert-warning">
+        <strong>Security Lab:</strong>
+        This page documents an intentionally implemented Path Traversal vulnerability in VulnShop
+        for educational and demonstration purposes.
+    </div>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                1. Path Traversal - Unauthorized File Access
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Description</h5>
+
+            <p>
+                Path Traversal is a vulnerability that occurs when an application
+                uses a file path provided by the user without proper validation.
+            </p>
+
+            <p>
+                An attacker may manipulate the requested file path and access files
+                outside the intended directory.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+
+            <pre><code>
+GET /orders/&lt;order_id&gt;/invoice
+            </code></pre>
+
+            <h5>Affected Route</h5>
+
+            <pre><code>
+src/routes/order_routes.py
+            </code></pre>
+
+            <h5>Manual Demonstration</h5>
+
+            <pre><code>
+            1. Login to the application with a valid user account. for exemple : 
+            Email : user@test.com
+            Password : 123456
+
+            2. Open the normal invoice URL:
+
+            http://127.0.0.1:5000/orders/18/invoice
+
+            3. The application downloads the normal invoice PDF.
+
+            4. Now modify the URL by adding the file parameter:
+
+            http://127.0.0.1:5000/orders/18/invoice?file=../secret.txt
+
+            5. Send the modified request in the browser.
+
+            6. If the application downloads secret.txt instead of the invoice PDF,
+            the Path Traversal vulnerability is confirmed.
+            </code></pre>
+
+            <h5>Expected Result</h5>
+
+            <p>
+                The application returns a file that was not intended to be
+                accessible through the invoice functionality.
+            </p>
+
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <p>
+            Instead of manually modifying the URL in the browser, the vulnerability
+            can also be demonstrated automatically using a Python Selenium script.
+            </p>
+
+            <h6>Exploit File</h6>
+
+            <pre><code>
+            exploits/path_traversal_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+            cd exploits
+            python path_traversal_exploit.py
+            </code></pre>
+
+            <h6>What the Script Does</h6>
+
+            <ul>
+                <li>Starts a supported web browser automatically.</li>
+                <li>Logs in using a valid user account.</li>
+                <li>Maintains the authenticated session.</li>
+                <li>Requests the invoice download endpoint.</li>
+                <li>Modifies the request by adding a file parameter.</li>
+                <li>Sends the modified request to the application.</li>
+                <li>Demonstrates that a file outside the invoice directory can be downloaded.</li>
+            </ul>
+
+            <h6>Target Endpoint</h6>
+
+            <pre><code>
+            GET /orders/&lt;order_id&gt;/invoice
+            </code></pre>
+
+            <h6>Example Configuration</h6>
+
+            <pre><code>
+            EMAIL = "user@test.com"
+            PASSWORD = "123456"
+
+            ORDER_ID = 18
+
+            PAYLOAD = "../secret.txt"
+            </code></pre>
+
+            <h6>Expected Result</h6>
+
+            <p>
+            After successful authentication, the script requests:
+            </p>
+
+            <pre><code>
+            /orders/1/invoice?file=../secret.txt
+            </code></pre>
+
+            <p>
+            If the application downloads <code>secret.txt</code> instead of the
+            invoice PDF, the Path Traversal vulnerability has been successfully
+            demonstrated.
+            </p>
+
+            <p>
+            The browser download folder should contain the requested file,
+            showing that the application allowed access to a file outside the
+            intended invoice directory.
+            </p>
+
+
+            <h5>Impact</h5>
+
+            <ul>
+                <li>Unauthorized file access</li>
+                <li>Exposure of sensitive information</li>
+                <li>Disclosure of internal application files</li>
+                <li>Violation of confidentiality</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+
+            <ul>
+                <li>Validate all file paths received from users.</li>
+                <li>Restrict file access to dedicated directories.</li>
+                <li>Reject directory traversal sequences.</li>
+                <li>Use allow-lists for downloadable files.</li>
+            </ul>
+
+            <h5>Files Involved</h5>
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>src/routes/order_routes.py(download_invoice)</td>
+                        <td>Handles invoice downloads.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/shop/my_orders.html</td>
+                        <td>Provides the invoice download link.</td>
+                    </tr>
+
+                    <tr>
+                        <td>exploits/path_traversal_exploit.py</td>
+                        <td>Automates the vulnerability demonstration.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/security_lab/path_traversal.html</td>
+                        <td>This file. Documentation page.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Vulnshop/files/secret.txt</td>
+                        <td>The targeted file for path traversal</td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

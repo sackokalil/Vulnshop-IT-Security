@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from src.services.user_service import create_user, get_user_by_email
+from src.services.user_service import create_user, get_user_by_email, update_password_by_email
 from src.services.auth_service import authenticate_user
 from src.services.auth_service import authenticate_user, logout_user
 import uuid
@@ -50,7 +50,7 @@ def contains_sql_injection_payload(value):
 
     return False
 
-
+#--------------------------------------------------------
 
 login_bp = Blueprint('login', __name__)
 @login_bp.route('/login', methods=['GET', 'POST'])
@@ -124,7 +124,7 @@ def login_page():
 
     return render_template('auth/login.html')
 
-
+#----------------------------------------------------------------
 
 register_bp = Blueprint("register", __name__, url_prefix="/register")
 @register_bp.route("/", methods=["GET", "POST"])
@@ -170,6 +170,7 @@ def register_page():
 
     return render_template("auth/register.html")
 
+#----------------------------------------------------
 
 logout_bp = Blueprint('logout', __name__)
 @logout_bp.route("/logout")
@@ -183,3 +184,61 @@ def logout():
 
     flash("You have been logged out.", "success")
     return redirect(url_for("login.login_page"))
+
+#-----------------------------------------------
+
+forgot_password_bp = Blueprint(
+    'forgot_password',
+    __name__
+)
+
+@forgot_password_bp.route(
+    '/forgot_password',
+    methods=['GET', 'POST']
+)
+def forgot_password():
+
+    if request.method == "POST":
+
+        email = request.form.get("email", "").strip()
+        new_password = request.form.get("new_password", "")
+
+        user = get_user_by_email(email)
+
+        if not user:
+            flash("User not found.", "danger")
+            return redirect(
+                url_for("forgot_password.forgot_password")
+            )
+
+        # VULNERABILITY:
+        # Password reset without token,
+        # security question or email verification
+
+        update_password_by_email(
+            email,
+            new_password
+        )
+
+        create_security_event(
+            event_type="BROKEN_AUTHENTICATION",
+            severity="High",
+            description=f"Password reset performed for {email} without verification.",
+            user_id=None,
+            endpoint=request.path,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent")
+        )
+
+        flash(
+            "Password changed successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("login.login_page")
+        )
+
+    return render_template(
+        "auth/forgot-password.html"
+    )

@@ -31,6 +31,7 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
+        {% if session.get("role") == "Admin" %}
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -154,6 +155,7 @@
             </div>
 
         </ul>
+        {% endif %}
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -163,6 +165,7 @@
             <div id="content">
 
                 <!-- Topbar -->
+                {% if session.get("role") == "Admin" %}
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
@@ -334,7 +337,9 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Kalil SACKO</span>
+                                
                                 <img class="img-profile rounded-circle"
                                     src="{{url_for('static', filename='img/undraw_profile.svg')}}">
                             </a>
@@ -357,9 +362,11 @@
                             </div>
                         </li>
 
+
                     </ul>
 
                 </nav>
+                {% endif %}
                 <!-- End of Topbar -->
 
 

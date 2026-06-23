@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title>VulnShop - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{url_for('static', filename='vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
@@ -85,7 +85,7 @@
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                        <a class="small" href="{{url_for('forgot_password.forgot_password')}}">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="{{url_for('register.register_page')}}">Create an Account!</a>
