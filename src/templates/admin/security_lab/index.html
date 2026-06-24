@@ -127,6 +127,21 @@
             </a>
         </div>
 
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{{ url_for('admin_vulnerability.blind_sqli_page') }}" class="text-decoration-none">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Blind SQLi
+                        </div>
+                        <div class="h6 mb-0 text-gray-800">
+                            Boolean-based search query manipulation
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
     </div>
 
     <div class="card shadow mb-4">
@@ -220,6 +235,13 @@
                         <td>File Upload</td>
                         <td>OWASP Top 10</td>
                         <td>exploits/upload_exploit.py</td>
+                        <td><span class="badge badge-success">Implemented</span></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Blind SQLi</td>
+                        <td>SQL injection</td>
+                        <td>exploits/blind_sql_exploit.py</td>
                         <td><span class="badge badge-success">Implemented</span></td>
                     </tr>
                 </tbody>

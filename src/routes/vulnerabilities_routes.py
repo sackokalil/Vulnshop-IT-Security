@@ -67,3 +67,10 @@ def file_upload_page():
     return render_template(
         "admin/security_lab/file_upload.html"
     )
+
+
+@admin_vulnerability_bp.route("/blind-sqli")
+def blind_sqli_page():
+    return render_template(
+        "admin/security_lab/blind_sqli.html"
+    )

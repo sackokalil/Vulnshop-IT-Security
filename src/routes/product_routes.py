@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from src.services.security_event_service import create_security_event
 
 
+
 from src.services.product_service import (
     get_all_products,
     get_product_by_id,
@@ -80,6 +81,11 @@ def search_product():
     # The vulnerability becomes active if the template renders it with "|safe".
 
     # 2. Union-Based SQL Injection: search query is used unsafely in product search
+    #3. Blind sql injection : 1 OR 1=1 ; 
+
+    #the three search vulnerabilities are implemented in the file product.py in the function
+    #search_products_by_keyword(keyword); which is called by the function bellow
+    #search_products(query) implemented in the file product_service.py
     
 
     query = request.args.get("query", "").strip()
@@ -246,3 +252,7 @@ def delete_product(product_id):
 
     flash("Product deleted successfully!", "success")
     return redirect(url_for("admin_product.admin_product_list"))
+
+#--------------------------------------------------------------------
+
+

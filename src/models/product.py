@@ -91,13 +91,34 @@ def delete_product_by_id(product_id):
 
 
 
+
+
+
+
+
 def search_products_by_keyword(keyword):
     conn = get_db_connection()
 
     keyword_upper = keyword.upper()
-    
-    if ("UNION" in keyword_upper or "SELECT" in keyword_upper) :
-        #Query for Union Based Sql INJECTION
+
+    is_blind_payload = (
+        " AND " in keyword_upper
+        or " OR " in keyword_upper
+        or "1=1" in keyword_upper
+        or "1=2" in keyword_upper
+        or "SUBSTR" in keyword_upper
+        or "SUBSTRING" in keyword_upper
+        or "LENGTH" in keyword_upper
+        or "ASCII" in keyword_upper
+    )
+
+    is_union_payload = (
+        "UNION SELECT" in keyword_upper
+        or "' UNION" in keyword_upper
+    )
+
+    #Union based Sql injection
+    if is_union_payload:
         query = (
             "SELECT id, name, description, price, category, image_url "
             "FROM products "
@@ -108,12 +129,21 @@ def search_products_by_keyword(keyword):
         )
 
         products = conn.execute(query).fetchall()
-
         conn.close()
 
+    #Blind SQL injection
+    elif is_blind_payload:
+        query = (
+            "SELECT id, name, description, price, category, image_url "
+            "FROM products "
+            f"WHERE id = {keyword} "
+        )
 
+        products = conn.execute(query).fetchall()
+        conn.close()
+
+    #Normal search and reflected XSS
     else:
-        #Query for refelcted xss
         products = conn.execute("""
             SELECT id, name, description, price, category, image_url
             FROM products
