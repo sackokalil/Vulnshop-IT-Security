@@ -1,0 +1,259 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1 class="h3 mb-4 text-gray-800">
+        Blind SQL Injection
+    </h1>
+
+    <div class="alert alert-warning">
+        <strong>Security Lab:</strong>
+        This page documents an intentionally implemented Blind SQL Injection vulnerability
+        in VulnShop for educational and demonstration purposes.
+    </div>
+
+    <!-- Blind SQL Injection Section -->
+    <div class="card shadow mb-4">
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                3. Boolean-Based Blind SQL Injection
+            </h6>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Description</h5>
+            <p>
+                Blind SQL Injection occurs when an application is vulnerable to SQL Injection
+                but does not directly display database contents or SQL error messages.
+            </p>
+
+            <p>
+                Instead of receiving sensitive data directly, an attacker infers information
+                from differences in the application's response.
+            </p>
+
+            <p>
+                In VulnShop, the product search functionality builds a SQL query using
+                unsanitized user input. An attacker can inject boolean conditions and
+                observe whether products are returned or not.
+            </p>
+
+            <h5>Affected Endpoint</h5>
+            <pre><code>GET /products/search?query=</code></pre>
+
+            <h5>Affected Route</h5>
+            <pre><code>src/routes/product_routes.py</code></pre>
+
+            <h5>Affected Model / Service</h5>
+            <pre><code>
+src/models/product.py
+src/services/product_service.py
+            </code></pre>
+
+            <h5>Vulnerable Code</h5>
+            <pre><code>
+def search_products_by_keyword(keyword):
+    conn = get_db_connection()
+
+    keyword_upper = keyword.upper()
+
+    if (
+        "AND" in keyword_upper
+        or "OR" in keyword_upper
+        or "SUBSTR" in keyword_upper
+        or "SUBSTRING" in keyword_upper
+        or "LENGTH" in keyword_upper
+        or "ASCII" in keyword_upper
+    ):
+        query = (
+            "SELECT id, name, description, price, category, image_url "
+            "FROM products "
+            f"WHERE id = {keyword} "
+        )
+
+        products = conn.execute(query).fetchall()
+            </code></pre>
+
+            <p>
+                The value supplied by the user is inserted directly into the SQL statement.
+                Because no parameterized query is used, attackers can inject SQL logic.
+            </p>
+
+            <h5>Manual Exploitation Scenario</h5>
+
+            <pre><code>
+1. Open the home page.
+
+2. Use the product search field.
+
+3. Submit a TRUE condition:
+
+   1 OR 5=5
+
+4. Observe that products are returned.
+
+5. Submit a FALSE condition:
+
+   1 AND 5=6
+
+6. Observe that no products are returned.
+            </code></pre>
+
+            <h5>Expected Vulnerable Result</h5>
+            <p>
+                Different application responses indicate that the injected SQL condition
+                is being evaluated by the database.
+            </p>
+
+            <p>
+                If a TRUE condition returns products and a FALSE condition returns no products,
+                the Boolean-Based Blind SQL Injection vulnerability is confirmed.
+            </p>
+
+            <h5>Impact</h5>
+            <ul>
+                <li>Database structure discovery</li>
+                <li>Information disclosure through inference</li>
+                <li>Extraction of sensitive data over multiple requests</li>
+                <li>Possible preparation for further SQL Injection attacks</li>
+                <li>Compromise of application confidentiality</li>
+            </ul>
+
+            <h5>Mitigation</h5>
+            <p>
+                User input must never be concatenated directly into SQL queries.
+                The secure solution is to use parameterized queries.
+            </p>
+
+            <pre><code>
+products = conn.execute("""
+    SELECT id, name, description, price, category, image_url
+    FROM products
+    WHERE name LIKE ?
+       OR description LIKE ?
+       OR category LIKE ?
+    ORDER BY id DESC
+""", (
+    f"%{keyword}%",
+    f"%{keyword}%",
+    f"%{keyword}%"
+)).fetchall()
+            </code></pre>
+
+            <p>
+                Parameterized queries ensure that user input is treated as data rather
+                than executable SQL code.
+            </p>
+
+            <h5>Files Involved</h5>
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>src/routes/product_routes.py</td>
+                        <td>Receives the search parameter from the user and forwards it to the product service.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/services/product_service.py</td>
+                        <td>Delegates the search request to the model layer.</td>
+                    </tr>
+
+                    <tr>
+                        <td>src/models/product.py</td>
+                        <td>Executes the vulnerable SQL query using the injected search value.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/base.html</td>
+                        <td>Contains the global product search form used to submit the payload.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/home.html</td>
+                        <td>Displays the search results returned by the vulnerable query.</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>exploits/blind_sqli_exploit.py</td>
+                        <td>Automates the Blind SQL Injection demonstration using Selenium.</td>
+                    </tr>
+
+                    <tr>
+                        <td>templates/admin/security_lab/blind_sqli.html</td>
+                        <td>This file. It documents the Blind SQL Injection vulnerability and its mitigation.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5>Automated Exploit Demonstration</h5>
+
+            <p>
+                The vulnerability can also be demonstrated automatically using a Selenium script.
+                The script opens the vulnerable search endpoint with a boolean SQL payload.
+            </p>
+
+            <h6>Exploit File</h6>
+
+            <pre><code>
+exploits/blind_sqli_exploit.py
+            </code></pre>
+
+            <h6>Execution Command</h6>
+
+            <pre><code>
+cd exploits
+python blind_sqli_exploit.py
+            </code></pre>
+
+            <h6>What the Script Does</h6>
+
+            <ul>
+                <li>Starts a browser using Selenium.</li>
+                <li>Opens the vulnerable product search endpoint.</li>
+                <li>Submits a Boolean-Based SQL Injection payload.</li>
+                <li>Triggers the vulnerable SQL query.</li>
+                <li>Shows that products are returned when the injected condition is true.</li>
+                <li>Confirms the Blind SQL Injection vulnerability.</li>
+            </ul>
+
+            <h6>Example Payload</h6>
+
+            <pre><code>
+1 OR 5=5
+            </code></pre>
+
+            <h6>Expected Result</h6>
+
+            <pre><code>
+[+] Opening Blind SQL Injection URL...
+[+] Payload submitted.
+[+] Search result page opened.
+[+] If products are displayed, the TRUE condition was accepted.
+[+] Blind SQL Injection vulnerability confirmed.
+            </code></pre>
+
+            <p>
+                Security events generated during the attack can be stored in the
+                <strong>security_events</strong> table and displayed in the
+                <strong>Recent Security Events</strong> dashboard section.
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
